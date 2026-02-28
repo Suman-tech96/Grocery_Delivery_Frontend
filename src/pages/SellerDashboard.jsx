@@ -9,6 +9,7 @@ export default function SellerDashboard() {
   const [category, setCategory] = useState(categories[0]?.path || "Vegetables");
   const [price, setPrice] = useState("");
   const [offerPrice, setOfferPrice] = useState("");
+  const [stock, setStock] = useState("");
   const [description, setDescription] = useState("");
   const [imageFiles, setImageFiles] = useState([]);
   const [saving, setSaving] = useState(false);
@@ -36,9 +37,10 @@ export default function SellerDashboard() {
       fd.append("price", String(price));
       if (offerPrice) fd.append("offerPrice", String(offerPrice));
       if (description) fd.append("description", description);
+      if (stock) fd.append("stock", String(stock));
       imageFiles.forEach((f) => fd.append("images", f));
       await apiForm("/products", fd, { auth: true });
-      setName(""); setCategory(categories[0]?.path || "Vegetables"); setPrice(""); setOfferPrice(""); setDescription(""); setImageFiles([]);
+      setName(""); setCategory(categories[0]?.path || "Vegetables"); setPrice(""); setOfferPrice(""); setDescription(""); setStock(""); setImageFiles([]);
       const res = await api("/products/mine", { auth: true });
       setMyProducts(res.products || []);
       alert("Product added");
@@ -72,6 +74,10 @@ export default function SellerDashboard() {
             <div>
               <label className="text-sm text-gray-600">Offer Price (optional)</label>
               <input className="w-full border rounded-lg px-3 py-2 mt-1" type="number" min="0" value={offerPrice} onChange={(e)=>setOfferPrice(e.target.value)} />
+            </div>
+            <div>
+              <label className="text-sm text-gray-600">Stock Quantity</label>
+              <input className="w-full border rounded-lg px-3 py-2 mt-1" type="number" min="0" value={stock} onChange={(e)=>setStock(e.target.value)} />
             </div>
             <div className="md:col-span-2">
               <label className="text-sm text-gray-600">Description</label>
@@ -152,6 +158,7 @@ export default function SellerDashboard() {
                 <div className="font-semibold text-gray-800">{p.name}</div>
                 <div className="text-sm text-gray-600">{p.category}</div>
                 <div className="text-emerald-600 font-bold">₹{p.offerPrice ?? p.price}</div>
+                <div className="text-sm text-gray-700 mt-1">Stock: {p.stock ?? 0}</div>
                 <div className="flex items-center gap-2 mt-2">
                   <button className="px-3 py-1 rounded bg-red-600 text-white text-xs" onClick={async()=>{
                     try {
@@ -160,6 +167,9 @@ export default function SellerDashboard() {
                       alert("Product deleted");
                     } catch(e){ alert(e.message || "Delete failed"); }
                   }}>Delete</button>
+                  <form onSubmit={async(e)=>{e.preventDefault(); const nv = Number(prompt("Enter new stock", String(p.stock ?? 0)) || ""); if(isNaN(nv)||nv<0) return; try{ const r = await api(`/products/${p._id}/stock`,{method:"PUT",auth:true,body:{stock:nv}}); setMyProducts((arr)=>arr.map(x=> x._id===p._id ? {...x, stock:r.stock} : x)); alert("Stock updated"); }catch(err){ alert(err.message || "Stock update failed"); }}}>
+                    <button className="px-3 py-1 rounded bg-blue-600 text-white text-xs" type="submit">Update Stock</button>
+                  </form>
                 </div>
               </div>
             ))}

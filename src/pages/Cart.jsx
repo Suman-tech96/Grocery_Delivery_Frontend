@@ -36,6 +36,11 @@ export default function Cart({ cart = {}, onInc, onDec, onRemove, onClearCart })
       return;
     }
     if (total < 1) { alert("Total amount must be at least ₹1"); return; }
+    const insufficient = items.find(({ p, qty }) => (p.stock ?? 0) < qty);
+    if (insufficient) {
+      alert(`Out of stock for "${insufficient.p.name}". Available: ${insufficient.p.stock ?? 0}. Please reduce quantity.`);
+      return;
+    }
     const lineItems = items.map(({ p, qty }) => ({
       productId: p._id,
       name: p.name,
@@ -136,18 +141,19 @@ export default function Cart({ cart = {}, onInc, onDec, onRemove, onClearCart })
           <div className="space-y-4">
             {items.map(({ p, qty }) => {
               const price = p.offerPrice ?? p.price;
+              const available = p.stock ?? 0;
               return (
                 <div key={p._id} className="grid grid-cols-12 items-center rounded-xl border border-gray-200 p-4">
                   <div className="col-span-12 md:col-span-6 flex items-center gap-4">
                     <img src={fileUrl(p.images?.[0])} alt={p.name} className="w-20 h-20 object-contain rounded-lg border border-gray-200" />
                     <div>
                       <div className="font-semibold text-gray-800">{p.name}</div>
-                      <div className="text-sm text-gray-500">Weight: N/A</div>
+                      <div className="text-sm text-gray-500">In stock: {available}</div>
                       <div className="text-sm text-gray-500 flex items-center gap-2 mt-1">
                         Qty:
                         <button onClick={() => onDec(p)} className="px-2 py-1 border rounded">-</button>
                         <span className="min-w-6 text-center">{qty}</span>
-                        <button onClick={() => onInc(p)} className="px-2 py-1 border rounded">+</button>
+                        <button onClick={() => { if (qty < available) onInc(p); else alert("Out of stock"); }} className="px-2 py-1 border rounded">+</button>
                       </div>
                     </div>
                   </div>

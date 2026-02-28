@@ -7,6 +7,7 @@ function Card({ p, onAdd }) {
   const imgs = p.images?.length ? p.images : (Array.isArray(p.image) ? p.image : []);
   const [idx, setIdx] = useState(0);
   const src = imgs[idx] ? fileUrl(imgs[idx]) : "";
+  const available = p.stock ?? 0;
   return (
     <div className="group rounded-2xl border border-gray-200 p-4 shadow-sm hover:shadow-lg hover:border-emerald-200 transition-all duration-200 flex flex-col gap-3">
       <a href={`#/product/${p._id}`} className="relative rounded-xl bg-white border border-gray-100 overflow-hidden">
@@ -16,6 +17,7 @@ function Card({ p, onAdd }) {
         </div>
         <div className="absolute left-3 top-3 text-xs px-2 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">{p.category}</div>
         {p.offerPrice ? <div className="absolute right-0 top-0 px-2 py-1 rounded-bl-lg bg-emerald-600 text-white text-xs">-{Math.max(0, Math.round(100 - (price / p.price) * 100))}%</div> : null}
+        {available<=0 ? <div className="absolute left-3 bottom-3 text-xs px-2 py-1 rounded bg-red-100 text-red-700 border border-red-200">Out of stock</div> : null}
       </a>
       {imgs.length > 1 ? (
         <div className="flex items-center gap-2 mt-1">
@@ -39,7 +41,7 @@ function Card({ p, onAdd }) {
         <div className="text-emerald-700 font-bold text-lg">₹{price}</div>
         {p.offerPrice ? <div className="text-gray-400 line-through text-sm">₹{p.price}</div> : null}
       </div>
-      <button onClick={() => onAdd(p)} className="mt-auto inline-flex items-center justify-center gap-2 rounded-lg bg-emerald-600 text-white px-4 py-2 hover:bg-emerald-700">
+      <button onClick={() => onAdd(p)} disabled={available<=0} className={`mt-auto inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2 ${available<=0?'bg-gray-300 text-gray-600 cursor-not-allowed':'bg-emerald-600 text-white hover:bg-emerald-700'}`}>
         <img src={assets.cart_icon} alt="" className="w-4 h-4" />
         Add to Cart
       </button>

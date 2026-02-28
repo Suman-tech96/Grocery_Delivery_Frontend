@@ -52,6 +52,7 @@ export default function Product({ id, onAdd }) {
     onAdd(p);
     window.location.hash = "#/cart";
   }
+  const available = p.stock ?? 0;
   return (
     <>
       <section className="bg-white">
@@ -91,6 +92,7 @@ export default function Product({ id, onAdd }) {
                 <div className="text-lg text-gray-600">MRP: <span className="text-2xl font-bold text-emerald-700">₹{price}</span></div>
                 <div className="text-xs text-gray-500">(inclusive of all taxes)</div>
               </div>
+              <div className="mt-2 text-sm">{available>0 ? <span className="text-emerald-700">In stock: {available}</span> : <span className="text-red-600">Out of stock</span>}</div>
               {(Array.isArray(p.description) ? p.description.length : (typeof p.description === "string" ? p.description.trim().length : 0)) ? (
                 <div className="mt-4">
                   <div className="font-semibold text-gray-800 mb-1">About Product</div>
@@ -102,8 +104,8 @@ export default function Product({ id, onAdd }) {
                 </div>
               ) : null}
               <div className="mt-5 flex items-center gap-3">
-                <button onClick={() => onAdd(p)} className="px-6 py-3 rounded-lg bg-gray-100 text-gray-800 font-semibold">Add to Cart</button>
-                <button onClick={buyNow} className="px-6 py-3 rounded-lg bg-emerald-600 text-white font-semibold">Buy now</button>
+                <button onClick={() => onAdd(p)} disabled={available<=0} className={`px-6 py-3 rounded-lg font-semibold ${available<=0?'bg-gray-200 text-gray-500':'bg-gray-100 text-gray-800'}`}>Add to Cart</button>
+                <button onClick={buyNow} disabled={available<=0} className={`px-6 py-3 rounded-lg text-white font-semibold ${available<=0?'bg-gray-300':'bg-emerald-600'}`}>Buy now</button>
               </div>
             </div>
           </div>
