@@ -15,13 +15,8 @@ export default function ForgotPassword() {
     e.preventDefault();
     setErr(""); setMsg("");
     try {
-      const res = await api("/auth/request-otp", { method: "POST", body: { email } });
-      if (res?.devOtp) {
-        setOtp(res.devOtp);
-        setMsg(`OTP (development): ${res.devOtp}`);
-      } else {
-        setMsg("OTP sent to your email");
-      }
+      await api("/auth/request-otp", { method: "POST", body: { email } });
+      setMsg("OTP sent to your email");
       setVerified(false);
       setStep(2);
     } catch (e) { setErr(e.message); }

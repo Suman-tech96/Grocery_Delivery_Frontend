@@ -118,7 +118,7 @@ export default function SellerDashboard() {
           </div>
         </div>
         <div className="rounded-xl border border-gray-200 p-4">
-          <div className="text-xl font-bold text-gray-800 mb-3">Recent Orders</div>
+          <div className="text-xl font-bold text-gray-800 mb-3"></div>
           <div className="space-y-3">
             {orders.slice(0, 10).map((o) => (
               <div key={o._id} className="flex items-center justify-between gap-3 text-sm">
