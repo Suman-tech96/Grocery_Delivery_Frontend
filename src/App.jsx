@@ -19,6 +19,9 @@ import Profile from "./pages/Profile";
 import Orders from "./pages/Orders";
 import DeliveryDashboard from "./pages/DeliveryDashboard";
 import UserDashboard from "./pages/UserDashboard";
+import Recipes from "./pages/Recipes";
+import AdminRecipes from "./pages/AdminRecipes";
+import RecipeView from "./pages/RecipeView";
 
 export default function App() {
   const [cart, setCart] = useState({});
@@ -158,6 +161,16 @@ export default function App() {
   }
   if (route === "#/orders") {
     body = <Orders />;
+  }
+  if (route === "#/recipes") {
+    body = <Recipes />;
+  }
+  if (route === "#/recipes-admin") {
+    body = <AdminRecipes />;
+  }
+  if (route.startsWith("#/recipe/")) {
+    const id = route.replace("#/recipe/", "");
+    body = <RecipeView id={id} />;
   }
   if (route === "#/delivery") {
     body = <DeliveryDashboard />;

@@ -1,18 +1,20 @@
 import { useEffect, useState } from "react";
-import { api } from "../lib/api";
+import { api, fileUrl } from "../lib/api";
 import { assets } from "../assets/greencart/greencart_assets/assets";
 
 export default function UserDashboard() {
   const [me, setMe] = useState(null);
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [recipes, setRecipes] = useState([]);
   useEffect(() => {
     Promise.all([
       api("/auth/me", { auth: true }),
-      api("/orders/my", { auth: true })
+      api("/orders/my", { auth: true }),
+      api("/recipes")
     ])
-      .then(([m, o]) => { setMe(m); setOrders(o.orders || []); })
-      .catch(() => { setMe(null); setOrders([]); })
+      .then(([m, o, r]) => { setMe(m); setOrders(o.orders || []); setRecipes(r.recipes || []); })
+      .catch(() => { setMe(null); setOrders([]); setRecipes([]); })
       .finally(() => setLoading(false));
   }, []);
   const delivered = orders.filter((o)=> o.orderStatus==="Delivered").length;
@@ -63,6 +65,22 @@ export default function UserDashboard() {
               </div>
               <div className="mt-3">
                 <a href="#/orders" className="text-emerald-700">See all orders →</a>
+              </div>
+            </div>
+            <div className="rounded-xl border border-gray-200 p-4">
+              <div className="text-xl font-bold text-gray-800 mb-3">Recipes For You</div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                {recipes.slice(0,6).map((r)=>(
+                  <a key={r._id} href={`#/recipe/${r._id}`} className="rounded-lg border border-gray-200 p-2 hover:shadow">
+                    <img src={fileUrl(r.imageUrl)} alt="" className="w-full h-24 object-cover rounded border border-gray-200" />
+                    <div className="text-sm font-medium text-gray-800 mt-1">{r.name}</div>
+                    <div className="text-xs text-gray-600">Serves: {r.serves}</div>
+                  </a>
+                ))}
+                {recipes.length === 0 && <div className="text-gray-600 text-sm">No recipes yet</div>}
+              </div>
+              <div className="mt-3">
+                <a href="#/recipes" className="text-emerald-700">Browse all recipes →</a>
               </div>
             </div>
           </>

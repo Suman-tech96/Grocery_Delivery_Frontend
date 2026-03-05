@@ -1,4 +1,4 @@
-const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5001/api";
+const BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 export function getToken() {
   return localStorage.getItem("token") || "";
@@ -27,14 +27,14 @@ export async function api(path, { method = "GET", body, auth = false } = {}) {
   return res.json();
 }
 
-export async function apiForm(path, formData, { auth = false } = {}) {
+export async function apiForm(path, formData, { auth = false, method = "POST" } = {}) {
   const headers = {};
   if (auth) {
     const t = getToken();
     if (t) headers.Authorization = `Bearer ${t}`;
   }
   const res = await fetch(`${BASE_URL}${path}`, {
-    method: "POST",
+    method,
     headers,
     body: formData
   });

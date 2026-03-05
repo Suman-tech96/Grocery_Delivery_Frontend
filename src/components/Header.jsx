@@ -50,6 +50,9 @@ export default function Header({ cartCount = 0, searchQuery = "", setSearch, use
           <a href="#/orders" className="font-semibold text-gray-800" onClick={()=>setOpen(false)}>
             Orders
           </a>
+          <a href="#/recipes" className="font-semibold text-gray-800" onClick={()=>setOpen(false)}>
+            Recipes
+          </a>
           {user?.role === "user" && (
             <a href="#/dashboard" className="font-semibold text-gray-800" onClick={()=>setOpen(false)}>
               Dashboard
@@ -58,6 +61,11 @@ export default function Header({ cartCount = 0, searchQuery = "", setSearch, use
           {(user?.role === "seller" || user?.role === "admin") && (
             <a href="#/seller" className="font-semibold text-gray-800" onClick={()=>setOpen(false)}>
               Seller Dashboard
+            </a>
+          )}
+          {(user?.role === "admin" || user?.role === "seller") && (
+            <a href="#/recipes-admin" className="font-semibold text-gray-800" onClick={()=>setOpen(false)}>
+              Recipe Dashboard
             </a>
           )}
           {user?.role === "delivery" && (
