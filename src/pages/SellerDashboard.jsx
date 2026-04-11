@@ -117,27 +117,66 @@ export default function SellerDashboard() {
             <div className="text-2xl font-bold text-gray-800">₹{revenue}</div>
           </div>
         </div>
-        <div className="rounded-xl border border-gray-200 p-4">
-          <div className="text-xl font-bold text-gray-800 mb-3"></div>
-          <div className="space-y-3">
+        <div className="rounded-xl border border-gray-200 p-6 shadow-sm bg-white">
+          <div className="text-xl font-black text-gray-900 mb-6 italic tracking-tighter">Recent Logistics Activity</div>
+          
+          {/* Header Grid */}
+          <div className="hidden md:grid grid-cols-6 gap-4 px-4 py-3 bg-gray-50 rounded-xl mb-4 text-[10px] font-black uppercase tracking-widest text-gray-400">
+            <div>Order ID</div>
+            <div>Timestamp</div>
+            <div>Valuation</div>
+            <div className="text-center">Status</div>
+            <div className="text-center">Verification</div>
+            <div className="text-right">Reference</div>
+          </div>
+
+          <div className="space-y-4">
             {orders.slice(0, 10).map((o) => (
-              <div key={o._id} className="flex items-center justify-between gap-3 text-sm">
-                <div className="font-medium text-gray-800">#{o._id}</div>
-                <div className="text-gray-600">{new Date(o.createdAt).toLocaleString()}</div>
-                <div className="text-gray-800">₹{o.totalAmount}</div>
-                <div className="text-gray-700">{o.orderStatus}</div>
-                {o.orderStatus === "Delivered" && o.otpVerified ? <div className="text-xs px-2 py-1 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">OTP verified</div> : null}
+              <div key={o._id} className="grid grid-cols-2 md:grid-cols-6 gap-4 items-center p-4 rounded-xl border border-gray-100 hover:border-emerald-100 hover:bg-emerald-50/10 transition-all group">
+                <div className="text-xs font-black text-gray-900 italic">#{o._id.slice(-8).toUpperCase()}</div>
+                <div className="text-[10px] font-black text-gray-400 uppercase tracking-tight">{new Date(o.createdAt).toLocaleString()}</div>
+                <div className="text-sm font-black text-gray-900 italic">₹{o.totalAmount || "-"}</div>
+                <div className="flex justify-center">
+                  <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border ${
+                    o.orderStatus === 'Delivered' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-amber-50 text-amber-600 border-amber-100'
+                  }`}>
+                    {o.orderStatus || "-"}
+                  </span>
+                </div>
+                <div className="flex justify-center">
+                  {o.orderStatus === "Delivered" ? (
+                    o.otpVerified ? (
+                      <span className="text-[9px] font-black text-emerald-600 uppercase tracking-widest bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100 italic">SECURE</span>
+                    ) : (
+                      <span className="text-[9px] font-black text-gray-400 uppercase tracking-widest">-</span>
+                    )
+                  ) : <span className="text-[9px] font-black text-gray-300 uppercase tracking-widest">-</span>}
+                </div>
+                <div className="text-right text-[10px] font-black text-gray-300 group-hover:text-emerald-500 transition-colors">
+                  {o._id.slice(0, 8)}...
+                </div>
               </div>
             ))}
-            {orders.length === 0 && <div className="text-gray-600 text-sm">No orders yet</div>}
+            {orders.length === 0 && <div className="py-12 text-center text-[10px] font-black text-gray-300 uppercase tracking-[0.3em] italic">No transaction records found in vault</div>}
           </div>
           <hr className="my-4" />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <form onSubmit={(e)=>{e.preventDefault(); api(`/orders/${assignOrderId}/assign`, { method: "PUT", body: { deliveryEmail: assignEmail }, auth: true }).then(()=>{ alert("Assigned delivery"); setAssignOrderId(""); setAssignEmail(""); }).catch(()=> alert("Failed to assign")); }} className="space-y-2">
-              <div className="text-sm font-semibold text-gray-800">Assign Delivery</div>
-              <input className="w-full border rounded-lg px-3 py-2" placeholder="Order ID" value={assignOrderId} onChange={(e)=>setAssignOrderId(e.target.value)} required />
-              <input className="w-full border rounded-lg px-3 py-2" placeholder="Delivery boy email" value={assignEmail} onChange={(e)=>setAssignEmail(e.target.value)} required />
-              <button className="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm">Assign</button>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <form 
+              onSubmit={(e) => {
+                e.preventDefault(); 
+                api(`/orders/${assignOrderId}/assign`, { method: "PUT", body: { deliveryEmail: assignEmail }, auth: true })
+                  .then(() => { alert("Assigned delivery successfully"); setAssignOrderId(""); setAssignEmail(""); })
+                  .catch((err) => alert(err.message || "Failed to assign: check email/role.")); 
+              }} 
+              className="space-y-2 bg-blue-50/30 p-4 rounded-xl border border-blue-100"
+            >
+              <div className="text-sm font-semibold text-blue-800 flex items-center gap-2">
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                Assign Delivery
+              </div>
+              <input className="w-full border rounded-lg px-3 py-2 bg-white" placeholder="Order ID" value={assignOrderId} onChange={(e)=>setAssignOrderId(e.target.value)} required />
+              <input className="w-full border rounded-lg px-3 py-2 bg-white" placeholder="Delivery partner email" value={assignEmail} onChange={(e)=>setAssignEmail(e.target.value)} required />
+              <button className="w-full px-4 py-2 rounded-lg bg-blue-600 text-white text-sm font-bold shadow-sm hover:bg-blue-700 transition-colors">Confirm Assignment</button>
             </form>
             <form onSubmit={(e)=>{e.preventDefault(); api(`/orders/${statusOrderId}/status`, { method: "PUT", body: { status: statusValue }, auth: true }).then(()=>{ alert("Status updated"); setStatusOrderId(""); }).catch(()=> alert("Failed to update status")); }} className="space-y-2">
               <div className="text-sm font-semibold text-gray-800">Update Order Status</div>
@@ -147,33 +186,142 @@ export default function SellerDashboard() {
               </select>
               <button className="px-4 py-2 rounded-lg bg-emerald-600 text-white text-sm">Update</button>
             </form>
+            <form onSubmit={async(e)=>{
+              e.preventDefault();
+              const title = e.target.title.value;
+              const msg = e.target.msg.value;
+              try {
+                await api("/newsletter/announce", { method: "POST", body: { title, message: msg }, auth: true });
+                alert("Announcement sent to subscribers!");
+                e.target.reset();
+              } catch(err) { alert(err.message || "Failed to send"); }
+            }} className="space-y-2">
+              <div className="text-sm font-semibold text-gray-800">Send Announcement to Subscribers</div>
+              <input name="title" className="w-full border rounded-lg px-3 py-2" placeholder="Subject/Title" required />
+              <textarea name="msg" className="w-full border rounded-lg px-3 py-2" placeholder="Your message..." required />
+              <button className="px-4 py-2 rounded-lg bg-purple-600 text-white text-sm">Send Announcement</button>
+            </form>
           </div>
         </div>
-        <div className="rounded-xl border border-gray-200 p-4">
-          <div className="text-xl font-bold text-gray-800 mb-3">My Products</div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        <div className="rounded-xl border border-gray-200 p-6 bg-gray-50/10 mb-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-2xl font-black text-gray-900 tracking-tighter italic">Delivery Logistics Audit</h2>
+            <div className="px-4 py-1.5 bg-indigo-600 text-white text-[10px] font-black uppercase tracking-widest rounded-full italic shadow-lg shadow-indigo-100">Official Registry</div>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="w-full text-left border-collapse">
+              <thead>
+                <tr className="border-b-2 border-gray-900">
+                  <th className="py-4 text-[10px] font-black uppercase tracking-widest text-gray-400">Order & Date</th>
+                  <th className="py-4 text-[10px] font-black uppercase tracking-widest text-gray-400">Acquired Items</th>
+                  <th className="py-4 text-[10px] font-black uppercase tracking-widest text-gray-400">Customer</th>
+                  <th className="py-4 text-[10px] font-black uppercase tracking-widest text-gray-400">Courier Partner</th>
+                  <th className="py-4 text-[10px] font-black uppercase tracking-widest text-gray-400">Logistics Status</th>
+                  <th className="py-4 text-[10px] font-black uppercase tracking-widest text-gray-400 text-right">Evidence & Logs</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {orders.map((o) => (
+                  <tr key={o._id} className="group hover:bg-white transition-colors">
+                    <td className="py-5 pr-4">
+                      <div className="text-xs font-black text-gray-900 italic">#{o._id.slice(-8).toUpperCase()}</div>
+                      <div className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-1">{new Date(o.createdAt).toLocaleDateString()}</div>
+                    </td>
+                    <td className="py-5 pr-4">
+                      <div className="flex -space-x-1.5">
+                        {o.items?.slice(0,3).map((it, idx) => (
+                          <div key={idx} className="w-7 h-7 rounded-full border-2 border-white bg-gray-100 overflow-hidden shadow-sm" title={`${it.name} (ID: ${it.productId})`}>
+                            <img src={fileUrl(it.image)} className="w-full h-full object-cover" alt="" />
+                          </div>
+                        ))}
+                        {o.items?.length > 3 && <div className="w-7 h-7 rounded-full border-2 border-white bg-gray-900 text-[8px] font-bold text-white flex items-center justify-center shadow-sm">+{o.items.length - 3}</div>}
+                      </div>
+                    </td>
+                    <td className="py-5 pr-4">
+                      <div className="text-xs font-black text-gray-900">{o.userId?.name || "Anonymous"}</div>
+                      <div className="text-[10px] text-gray-400">{o.userId?.email}</div>
+                    </td>
+                    <td className="py-5 pr-4">
+                      {o.assignedDeliveryId ? (
+                        <>
+                          <div className="text-xs font-black text-indigo-600 italic uppercase">{o.assignedDeliveryId.name}</div>
+                          <div className="text-[10px] text-gray-400">{o.assignedDeliveryId.email}</div>
+                        </>
+                      ) : (
+                        <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest italic">Unassigned</span>
+                      )}
+                    </td>
+                    <td className="py-5 pr-4">
+                      <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest border ${
+                        o.orderStatus === 'Delivered' ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 
+                        o.orderStatus === 'Cancelled' ? 'bg-red-50 text-red-600 border-red-100' : 
+                        'bg-blue-50 text-blue-600 border-blue-100'
+                      }`}>
+                        {o.orderStatus}
+                      </span>
+                    </td>
+                    <td className="py-5 text-right">
+                      <div className="flex items-center justify-end gap-3">
+                        {o.deliveryProofImages?.length > 0 && (
+                          <div className="flex -space-x-2">
+                            {o.deliveryProofImages.slice(0, 2).map((img, i) => (
+                              <img key={i} src={fileUrl(img)} className="w-8 h-8 rounded-lg border-2 border-white object-cover shadow-sm bg-white cursor-pointer hover:scale-110 transition-transform" alt="Evidence" onClick={() => window.open(fileUrl(img), '_blank')} />
+                            ))}
+                          </div>
+                        )}
+                        <button 
+                          onClick={() => alert(`Mission Logs:\n${o.deliveryNotes?.map(n => `[${n.role}] ${n.message} (@ ${new Date(n.at).toLocaleString()})`).join('\n') || "No logs available"}`)}
+                          className="p-2 bg-gray-900 text-white rounded-xl hover:bg-indigo-600 transition-colors shadow-sm"
+                        >
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            {orders.length === 0 && <div className="py-20 text-center text-[10px] font-black text-gray-300 uppercase tracking-widest italic">No logistics records found in vault</div>}
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-gray-200 p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-xl font-bold text-gray-800">My Product Catalog</h2>
+            <span className="text-xs text-gray-400 font-medium">{myProducts.length} Listings Active</span>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {myProducts.map((p)=>(
-              <div key={p._id} className="rounded-lg border border-gray-200 p-3">
-                <img src={fileUrl(p.images?.[0])} alt={p.name} className="w-full h-32 object-contain mb-2" />
-                <div className="font-semibold text-gray-800">{p.name}</div>
-                <div className="text-sm text-gray-600">{p.category}</div>
-                <div className="text-emerald-600 font-bold">₹{p.offerPrice ?? p.price}</div>
-                <div className="text-sm text-gray-700 mt-1">Stock: {p.stock ?? 0}</div>
-                <div className="flex items-center gap-2 mt-2">
-                  <button className="px-3 py-1 rounded bg-red-600 text-white text-xs" onClick={async()=>{
+              <div key={p._id} className="group rounded-2xl border border-gray-100 p-4 hover:shadow-xl hover:border-emerald-100 transition-all bg-white relative overflow-hidden">
+                <div className="absolute top-2 right-2 flex gap-1">
+                  <button className="p-1.5 rounded-lg bg-red-50 text-red-600 opacity-0 group-hover:opacity-100 transition-opacity" onClick={async()=>{
+                    if(!confirm("Erase this listing permanently?")) return;
                     try {
                       await api(`/products/${p._id}`,{method:"DELETE",auth:true});
                       setMyProducts((arr)=>arr.filter(x=>x._id!==p._id));
-                      alert("Product deleted");
                     } catch(e){ alert(e.message || "Delete failed"); }
-                  }}>Delete</button>
-                  <form onSubmit={async(e)=>{e.preventDefault(); const nv = Number(prompt("Enter new stock", String(p.stock ?? 0)) || ""); if(isNaN(nv)||nv<0) return; try{ const r = await api(`/products/${p._id}/stock`,{method:"PUT",auth:true,body:{stock:nv}}); setMyProducts((arr)=>arr.map(x=> x._id===p._id ? {...x, stock:r.stock} : x)); alert("Stock updated"); }catch(err){ alert(err.message || "Stock update failed"); }}}>
-                    <button className="px-3 py-1 rounded bg-blue-600 text-white text-xs" type="submit">Update Stock</button>
-                  </form>
+                  }}>
+                    <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                  </button>
                 </div>
+                <div className="w-full h-32 bg-gray-50 rounded-xl mb-4 overflow-hidden flex items-center justify-center p-2">
+                  <img src={fileUrl(p.images?.[0])} alt={p.name} className="w-full h-full object-contain group-hover:scale-110 transition-transform" />
+                </div>
+                <div className="space-y-1">
+                  <div className="text-[10px] font-black text-emerald-600 uppercase tracking-widest">{p.category}</div>
+                  <div className="font-bold text-gray-900 line-clamp-1">{p.name}</div>
+                  <div className="flex items-center justify-between mt-2">
+                    <div className="text-emerald-700 font-black tracking-tighter italic">₹{p.offerPrice ?? p.price}</div>
+                    <div className="text-[9px] font-black text-gray-400 uppercase tracking-widest bg-gray-50 px-2 py-0.5 rounded">Stock: {p.stock ?? 0}</div>
+                  </div>
+                </div>
+                <button 
+                  onClick={async()=>{const nv = Number(prompt("Update Inventory Level:", String(p.stock ?? 0)) || ""); if(isNaN(nv)||nv<0) return; try{ const r = await api(`/products/${p._id}/stock`,{method:"PUT",auth:true,body:{stock:nv}}); setMyProducts((arr)=>arr.map(x=> x._id===p._id ? {...x, stock:r.stock} : x)); }catch(err){ alert(err.message || "Update failed"); }}}
+                  className="w-full mt-4 py-2 bg-gray-50 text-gray-900 text-[10px] font-black uppercase tracking-widest rounded-xl hover:bg-emerald-600 hover:text-white transition-all shadow-sm"
+                >Update Inventory</button>
               </div>
             ))}
-            {myProducts.length === 0 && <div className="text-gray-600 text-sm">No products added yet</div>}
+            {myProducts.length === 0 && <div className="col-span-full py-20 text-center border-2 border-dashed border-gray-100 rounded-3xl text-gray-300 font-black uppercase tracking-[0.2em]">No Listings Found</div>}
           </div>
         </div>
       </div>

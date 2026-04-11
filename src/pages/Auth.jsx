@@ -1,7 +1,7 @@
 import { assets } from "../assets/greencart/greencart_assets/assets";
 import { useEffect, useState } from "react";
-
 import { api, setToken } from "../lib/api";
+import { navigate } from "../lib/router";
 
 export default function Auth() {
   const [mode, setMode] = useState("login");
@@ -12,12 +12,15 @@ export default function Auth() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [err, setErr] = useState("");
+  const [loading, setLoading] = useState(false);
+
   async function submit(e) {
     e.preventDefault();
     setErr("");
+    setLoading(true);
     try {
       if (mode === "register") {
-        const res = await api("/auth/register", { method: "POST", body: { email, password, name, role, phone, storeName: role==="seller"?storeName:"" } });
+        const res = await api("/auth/register", { method: "POST", body: { email, password, name, role, phone, storeName: role === "seller" ? storeName : "" } });
         setToken(res.token);
       } else {
         const res = await api("/auth/login", { method: "POST", body: { email, password } });
@@ -25,78 +28,101 @@ export default function Auth() {
       }
       try {
         const me = await api("/auth/me", { auth: true });
-        window.location.hash = (me.role === "seller" || me.role === "admin") ? "#/seller" : (me.role === "delivery" ? "#/delivery" : "#/");
+        navigate((me.role === "seller" || me.role === "admin") ? "/seller" : (me.role === "delivery" ? "/delivery" : "/"));
       } catch {
-        window.location.hash = "#/";
+        navigate("/");
       }
     } catch (e) {
-      const msg = String(e.message || "").toLowerCase().includes("invalid")
-        ? "Invalid email or password"
-        : e.message;
-      setErr(msg);
+      setErr(e.message || "Authentication failed");
+    } finally {
+      setLoading(false);
     }
   }
+
   return (
-    <section className="bg-white">
-      <div className="mx-auto max-w-7xl px-4 py-10 grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-        <div className="hidden md:block">
-          <img src={assets.bottom_banner_image} alt="" className="w-full h-auto rounded-xl" />
-        </div>
-        <div>
-          <div className="flex items-center gap-2 mb-4">
-            <button onClick={() => setMode("login")} className={`px-4 py-2 rounded-lg border ${mode==="login"?"bg-emerald-600 text-white border-emerald-600":"border-gray-200"}`}>Login</button>
-            <button onClick={() => setMode("register")} className={`px-4 py-2 rounded-lg border ${mode==="register"?"bg-emerald-600 text-white border-emerald-600":"border-gray-200"}`}>Register</button>
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-6 lg:px-8">
+      <div className="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 bg-white rounded-[3rem] overflow-hidden shadow-2xl border border-gray-100 animate-fade-in min-h-[700px] items-stretch">
+        {/* Visual Side */}
+        <div className="hidden lg:block relative group overflow-hidden bg-emerald-50 h-full border-r border-gray-100">
+          <img
+            src={assets.bottom_banner_image_sm}
+            alt=""
+            className="absolute right-0 bottom-0 w-[80%] h-auto object-contain opacity-40 transition-transform duration-[2000ms] group-hover:scale-110 pointer-events-none select-none"
+          />
+          {/* Shaded Effect */}
+          <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-b from-black/70 via-black/20 to-transparent"></div>
+
+          <div className="absolute top-16 left-12 right-12 z-10 text-white drop-shadow-lg">
+            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-400 mb-4 block">Welcome to GreenCart</span>
+            <h2 className="text-4xl xl:text-5xl font-black leading-[1.1] tracking-tighter mb-4 italic">Experience Freshness<br /> Like Never Before.</h2>
+            <p className="text-gray-100 font-medium text-sm max-w-xs leading-relaxed opacity-90">Join our community of over 50,000+ healthy chefs and organic enthusiasts.</p>
           </div>
-          <h1 className="text-3xl font-extrabold text-gray-800 mb-2">{mode==="login"?"Welcome Back":"Create Your Account"}</h1>
-          <p className="text-gray-500 mb-4">{mode==="login"?"Sign in to continue":"Sign up to start shopping fresh groceries"}</p>
-          <form onSubmit={submit} className="space-y-3">
-            {mode==="register" && (
-              <>
-                <input className="w-full border rounded-lg px-4 py-2" placeholder="Full name" value={name} onChange={(e)=>setName(e.target.value)} required />
-                <div className="flex items-center gap-4">
-                  <label className="flex items-center gap-2 text-sm text-gray-700">
-                    <input type="radio" name="role" value="user" checked={role==="user"} onChange={(e)=>setRole(e.target.value)} />
-                    User
-                  </label>
-                  <label className="flex items-center gap-2 text-sm text-gray-700">
-                    <input type="radio" name="role" value="seller" checked={role==="seller"} onChange={(e)=>setRole(e.target.value)} />
-                    Seller
-                  </label>
-                  <label className="flex items-center gap-2 text-sm text-gray-700">
-                    <input type="radio" name="role" value="delivery" checked={role==="delivery"} onChange={(e)=>setRole(e.target.value)} />
-                    Delivery Boy
-                  </label>
+        </div>
+
+        {/* Form Side */}
+        <div className="p-8 md:p-16 lg:p-20 flex flex-col justify-center">
+          <div className="mb-12">
+            <div className="flex p-1 bg-gray-50 rounded-xl w-fit mb-6 shadow-inner border border-gray-100">
+              <button
+                onClick={() => setMode("login")}
+                className={`px-5 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${mode === "login" ? "bg-white text-emerald-600 shadow-sm" : "text-gray-400 hover:text-gray-600"}`}
+              >Login</button>
+              <button
+                onClick={() => setMode("register")}
+                className={`px-5 py-2 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${mode === "register" ? "bg-white text-emerald-600 shadow-sm" : "text-gray-400 hover:text-gray-600"}`}
+              >Register</button>
+            </div>
+            <h1 className="text-2xl md:text-3xl font-black text-gray-900 tracking-tighter mb-1.5 italic">
+              {mode === "login" ? "Hello Again." : "Join the Movement."}
+            </h1>
+            <p className="text-gray-400 font-medium text-xs">
+              {mode === "login" ? "Enter your credentials to access your pantry." : "Create your account to start curating fresh ingredients."}
+            </p>
+          </div>
+
+          <form onSubmit={submit} className="space-y-4">
+            {mode === "register" && (
+              <div className="space-y-4 animate-fade-in">
+                <input className="input-field" placeholder="Legal Name" value={name} onChange={(e) => setName(e.target.value)} required />
+
+                <div className="flex gap-4 p-2 bg-gray-50 rounded-2xl border border-gray-100 mb-6">
+                  {["user", "seller", "delivery"].map(r => (
+                    <label key={r} className={`flex-1 flex flex-col items-center p-3 rounded-xl cursor-pointer transition-all ${role === r ? 'bg-white shadow-sm ring-1 ring-emerald-500/20' : 'hover:bg-white/50 grayscale'}`}>
+                      <input type="radio" value={r} checked={role === r} onChange={(e) => setRole(e.target.value)} className="hidden" />
+                      <span className={`text-[8px] font-black uppercase tracking-widest ${role === r ? 'text-emerald-500' : 'text-gray-400'}`}>{r}</span>
+                    </label>
+                  ))}
                 </div>
-                {role==="user" && (
-                  <input className="w-full border rounded-lg px-4 py-2" placeholder="Phone number" value={phone} onChange={(e)=>setPhone(e.target.value)} />
+
+                <input className="input-field" placeholder="Mobile Connection" value={phone} onChange={(e) => setPhone(e.target.value)} required />
+                {role === "seller" && (
+                  <input className="input-field animate-fade-in" placeholder="Official Store Name" value={storeName} onChange={(e) => setStoreName(e.target.value)} required />
                 )}
-                {role==="seller" && (
-                  <>
-                    <input className="w-full border rounded-lg px-4 py-2" placeholder="Store name" value={storeName} onChange={(e)=>setStoreName(e.target.value)} required />
-                    <input className="w-full border rounded-lg px-4 py-2" placeholder="Contact phone" value={phone} onChange={(e)=>setPhone(e.target.value)} />
-                  </>
-                )}
-              </>
+              </div>
             )}
-            <input className="w-full border rounded-lg px-4 py-2" type="email" placeholder="Email" value={email} onChange={(e)=>setEmail(e.target.value)} required />
-            <input className="w-full border rounded-lg px-4 py-2" type="password" placeholder="Password" value={password} onChange={(e)=>setPassword(e.target.value)} required />
-            <button className="w-full bg-emerald-600 text-white font-semibold rounded-lg py-3">
-              {mode==="login"?"Login":"Create account"}
+
+            <input className="input-field" type="email" placeholder="Email Direction" value={email} onChange={(e) => setEmail(e.target.value)} required />
+            <input className="input-field" type="password" placeholder="Key Phrase (Password)" value={password} onChange={(e) => setPassword(e.target.value)} required />
+
+            <button disabled={loading} className="w-full mt-6 bg-gray-900 text-white font-black py-4 rounded-2xl hover:bg-emerald-600 active:scale-95 transition-all shadow-xl shadow-gray-200 disabled:opacity-50 text-xs uppercase tracking-[0.2em] italic">
+              {loading ? "TRANSACTING..." : (mode === "login" ? "AUTHENTICATE" : "ESTABLISH ACCOUNT")}
             </button>
           </form>
-          {err && <div className="text-sm text-red-600 mt-2">{err}</div>}
-          <div className="text-sm text-gray-600 mt-3">
-            {mode==="login" ? (
-              <>
-                <button onClick={() => (window.location.hash = "#/forgot")} className="text-emerald-600 mr-3">Forgot password?</button>
-                Don’t have an account? <button onClick={() => setMode("register")} className="text-emerald-600">Register</button>
-              </>
-            ) : (
-              <>Already have an account? <button onClick={() => setMode("login")} className="text-emerald-600">Login</button></>
-            )}
+
+          {err && (
+            <div className="mt-4 p-4 rounded-xl bg-red-50 border border-red-100 flex items-center gap-3 animate-bounce-in">
+              <svg className="w-5 h-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+              <p className="text-xs font-bold text-red-600 uppercase tracking-tighter">{err}</p>
+            </div>
+          )}
+
+          <div className="mt-8 text-center">
+            {mode === "login" ? (
+              <button onClick={() => navigate("/forgot")} className="text-[10px] font-black text-emerald-600 uppercase tracking-widest border-b border-emerald-500/30 pb-0.5">Recovery Access Key</button>
+            ) : null}
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 }

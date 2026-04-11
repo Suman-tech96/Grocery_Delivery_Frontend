@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { api } from "../lib/api";
+import { navigate } from "../lib/router";
 
 export default function ForgotPassword() {
   const [step, setStep] = useState(1);
@@ -37,7 +38,7 @@ export default function ForgotPassword() {
       if (!verified) { setErr("Please verify OTP first"); return; }
       await api("/auth/reset-password", { method: "POST", body: { email, otp, newPassword: password } });
       setMsg("Password reset successful. Please login.");
-      window.location.hash = "#/auth";
+      navigate("/auth");
     } catch (e) { setErr(e.message); }
   }
 

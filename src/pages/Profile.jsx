@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { api, apiForm, fileUrl } from "../lib/api";
 import { assets } from "../assets/greencart/greencart_assets/assets";
+import { navigate } from "../lib/router";
 
 export default function Profile({ user, setUser }) {
   const [name, setName] = useState(user?.name || "");
@@ -20,7 +21,7 @@ export default function Profile({ user, setUser }) {
             setName(me.name || "");
           }
         } catch {
-          window.location.hash = "#/auth";
+          navigate("/auth");
         }
       } else {
         setName(user.name || "");
