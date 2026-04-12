@@ -5,6 +5,7 @@ import { navigate } from "../lib/router";
 
 export default function Header({ cartCount = 0, searchQuery = "", setSearch, user, onLogout }) {
   const [open, setOpen] = useState(false);
+  const [mobileSearch, setMobileSearch] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const wrapRef = useRef(null);
@@ -15,7 +16,10 @@ export default function Header({ cartCount = 0, searchQuery = "", setSearch, use
 
     function onDocClick(e) {
       if (!wrapRef.current) return;
-      if (!wrapRef.current.contains(e.target)) setOpen(false);
+      if (!wrapRef.current.contains(e.target)) {
+        setOpen(false);
+        setMobileSearch(false);
+      }
     }
     document.addEventListener("mousedown", onDocClick);
     return () => {
@@ -34,7 +38,7 @@ export default function Header({ cartCount = 0, searchQuery = "", setSearch, use
       <div className="mx-auto max-w-7xl px-6 flex items-center justify-between" ref={wrapRef}>
         <div className="flex items-center gap-10">
           <a href="/" className="shrink-0">
-            <img src={assets.logo} alt="GreenCart" className="h-6 md:h-7 hover:scale-105 transition-transform" />
+            <img src={assets.logo} alt="GreenCart" className="h-5 md:h-7 hover:scale-105 transition-transform" />
           </a>
 
           <nav className="hidden lg:flex items-center gap-8">
@@ -64,9 +68,9 @@ export default function Header({ cartCount = 0, searchQuery = "", setSearch, use
           </nav>
         </div>
 
-        <div className="flex items-center gap-3 md:gap-6">
+        <div className="flex items-center gap-2 md:gap-6">
           {/* Search Bar */}
-          <div className="hidden md:flex items-center gap-2.5 bg-gray-50 rounded-xl px-4 py-2 min-w-[240px] relative border border-transparent focus-within:border-emerald-200 focus-within:bg-white transition-all">
+          <div className="hidden lg:flex items-center gap-2.5 bg-gray-50 rounded-xl px-4 py-2 min-w-[240px] relative border border-transparent focus-within:border-emerald-200 focus-within:bg-white transition-all">
             <svg className="w-3.5 h-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
             <input
               placeholder="Track down fresh deals..."
@@ -85,17 +89,20 @@ export default function Header({ cartCount = 0, searchQuery = "", setSearch, use
                 ) : (
                   <div className="grid gap-2">
                     {suggestions.map((p) => (
-                      <a
+                      <button
                         key={p._id}
-                        href={`/product/${p._id}`}
-                        className="flex items-center gap-4 p-3 rounded-2xl hover:bg-emerald-50 transition-colors group"
-                        onClick={() => setShowSuggestions(false)}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setShowSuggestions(false);
+                          navigate(`/product/${p._id}`);
+                        }}
+                        className="w-full flex items-center gap-4 p-3 rounded-2xl hover:bg-emerald-50 transition-colors group text-left"
                       >
                         <div className="w-10 h-10 bg-gray-50 rounded-xl overflow-hidden p-1">
                           <img src={p.image?.[0]} alt="" className="w-full h-full object-contain mix-blend-multiply" />
                         </div>
                         <span className="text-sm font-bold text-gray-700 group-hover:text-emerald-700">{p.name}</span>
-                      </a>
+                      </button>
                     ))}
                   </div>
                 )}
@@ -103,72 +110,108 @@ export default function Header({ cartCount = 0, searchQuery = "", setSearch, use
             )}
           </div>
 
-          <div className="flex items-center gap-3 md:gap-5">
+          <div className="flex items-center gap-2 md:gap-5">
+            {/* Mobile Search Toggle */}
+            <button 
+              className="lg:hidden p-2.5 rounded-xl bg-gray-50 text-gray-900 border border-gray-100"
+              onClick={() => setMobileSearch(!mobileSearch)}
+            >
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+            </button>
+
             {user ? <Dropdown user={user} onLogout={onLogout} /> : (
-              <a href="/auth" className="hidden sm:inline-flex text-[10px] font-black uppercase tracking-widest bg-emerald-600 text-white px-6 py-3 rounded-2xl shadow-lg shadow-emerald-100 uppercase italic">
+              <a href="/auth" className="hidden sm:inline-flex text-[10px] font-black uppercase tracking-widest bg-emerald-600 text-white px-5 py-2.5 rounded-xl shadow-lg shadow-emerald-100 italic">
                 Get Started
               </a>
             )}
 
-            <a href="/cart" className="group relative flex items-center justify-center p-3 rounded-2xl bg-gray-900 text-white hover:bg-emerald-600 hover:scale-110 active:scale-90 transition-all shadow-xl shadow-gray-200">
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
+            <a href="/cart" className="group relative flex items-center justify-center p-2.5 md:p-3 rounded-xl md:rounded-2xl bg-gray-900 text-white hover:bg-emerald-600 transition-all shadow-xl shadow-gray-200">
+              <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
               {cartCount > 0 && (
-                <span className="absolute -top-2 -right-2 w-6 h-6 flex items-center justify-center rounded-xl bg-emerald-500 text-white text-[10px] font-black border-2 border-white animate-bounce-in">{cartCount}</span>
+                <span className="absolute -top-1.5 -right-1.5 w-5 h-5 md:w-6 md:h-6 flex items-center justify-center rounded-lg md:rounded-xl bg-emerald-500 text-white text-[9px] md:text-[10px] font-black border-2 border-white">{cartCount}</span>
               )}
             </a>
 
             <button
-              className="lg:hidden p-3 rounded-2xl bg-gray-50 text-gray-900"
+              className="lg:hidden p-2.5 rounded-xl bg-gray-900 text-white"
               onClick={() => setOpen(!open)}
             >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 6h16M4 12h16m-7 6h7" /></svg>
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 6h16M4 12h16m-7 6h7" /></svg>
             </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile Menu */}
-      {open && (
-        <div className="fixed inset-0 z-[150] lg:hidden animate-fade-in">
-          <div className="absolute inset-0 bg-gray-900/60 backdrop-blur-sm" onClick={() => setOpen(false)}></div>
-          <nav className="absolute right-0 top-0 bottom-0 w-80 bg-white shadow-2xl p-8 flex flex-col gap-6">
-            <div className="flex items-center justify-between mb-8">
-              <img src={assets.logo} alt="" className="h-6" />
-              <button onClick={() => setOpen(false)} className="p-2 bg-gray-50 rounded-xl">
-                <svg className="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
-              </button>
-            </div>
+      {/* Mobile Search Overlay */}
+      {mobileSearch && (
+        <div className="lg:hidden absolute top-full inset-x-0 bg-white border-t border-gray-100 p-4 shadow-xl animate-fade-in z-[110]">
+          <div className="flex items-center gap-3 bg-gray-50 rounded-xl px-4 py-2.5 border border-emerald-100 shadow-inner">
+            <svg className="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+            <input 
+              autoFocus
+              placeholder="Searching for fresh goods..."
+              className="w-full bg-transparent outline-none text-xs font-bold"
+              value={searchQuery}
+              onChange={(e) => setSearch?.(e.target.value)}
+            />
+            <button onClick={() => setMobileSearch(false)}>
+              <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Mobile Menu Drawer */}
+      <div className={`fixed inset-y-0 right-0 w-full max-w-sm bg-white shadow-[-20px_0_60px_-15px_rgba(0,0,0,0.1)] z-[200] transform transition-transform duration-500 ease-in-out lg:hidden ${open ? 'translate-x-0' : 'translate-x-full'}`}>
+        <div className="h-full flex flex-col p-8 overflow-y-auto">
+          <div className="flex items-center justify-between mb-12">
+            <img src={assets.logo} alt="" className="h-6" />
+            <button onClick={() => setOpen(false)} className="p-2.5 bg-gray-50 rounded-xl hover:bg-red-50 hover:text-red-500 transition-colors">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
+            </button>
+          </div>
+
+          <div className="space-y-6">
+            <div className="text-[10px] font-black uppercase tracking-[0.3em] text-emerald-600 mb-4 opacity-50 italic">Fleet Navigation</div>
             {[
               { name: "Home", path: "/" },
-              { name: "All Products", path: "/all-products" },
-              { name: "Orders", path: "/orders" },
-              { name: "Recipes", path: "/recipes" },
+              { name: "All Store Products", path: "/all-products" },
+              { name: "Order History", path: "/orders" },
+              { name: "Master Recipes", path: "/recipes" },
               ...(user?.role === "seller" || user?.role === "admin"
                 ? [
-                    { name: "Seller Hub", path: "/seller" },
-                    { name: "Manage Recipes", path: "/recipes-admin" },
+                    { name: "Seller Command", path: "/seller" },
+                    { name: "Recipe Admin", path: "/recipes-admin" },
                   ]
                 : []),
               ...(user?.role === "delivery"
-                ? [{ name: "Delivery Hub", path: "/delivery" }]
+                ? [{ name: "Logistics Hub", path: "/delivery" }]
                 : []),
             ].map((item) => (
               <a
                 key={item.name}
                 href={item.path}
-                className="text-2xl font-black text-gray-900 hover:text-emerald-600 transition-colors"
+                className="block text-2xl font-black text-gray-900 hover:text-emerald-600 hover:translate-x-2 transition-all"
                 onClick={() => setOpen(false)}
               >
                 {item.name}
               </a>
             ))}
-            <hr className="my-4 border-gray-50" />
+          </div>
+
+          <div className="mt-auto pt-8 border-t border-gray-50">
             {!(user?.role === "seller" || user?.role === "admin" || user?.role === "delivery") ? (
-              <a href="/auth" className="text-lg font-bold text-emerald-600" onClick={() => setOpen(false)}>Become a Partner</a>
-            ) : null}
-          </nav>
+              <a href="/auth" className="flex items-center gap-3 text-lg font-black text-emerald-600 italic" onClick={() => setOpen(false)}>
+                Unlock Partner Potential
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
+              </a>
+            ) : (
+                <div className="text-[9px] font-black text-gray-300 uppercase tracking-widest">Logged in as {user?.role}</div>
+            )}
+          </div>
         </div>
-      )}
+      </div>
+      {open && <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-[190] animate-fade-in lg:hidden" onClick={() => setOpen(false)}></div>}
     </header>
   );
 }

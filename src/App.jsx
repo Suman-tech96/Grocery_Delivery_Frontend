@@ -82,25 +82,63 @@ export default function App() {
   }
   function handleAdd(p, qty = 1, goToCart = false) {
     if (!getToken()) { navigate("/auth"); return; }
-    const n = Math.max(1, Math.floor(Number(qty) || 0));
-    if (!n) { showToast("Quantity must be at least 1"); return; }
-    const available = p?.stock ?? Infinity;
-    const finalQty = Math.min(n, available);
-    if (finalQty < n) {
-      showToast(`Only ${available} in stock. Adding ${finalQty}.`);
+    const requested = Math.max(1, Math.floor(Number(qty) || 1));
+    const inCart = cart[p?._id] || 0;
+    const available = p?.stock ?? 999;
+    
+    // Check how many more we can add without exceeding stock
+    const canAdd = Math.max(0, available - inCart);
+    const finalQty = Math.min(requested, canAdd);
+
+    if (finalQty <= 0) {
+      if (available <= 0) {
+        showToast("Sorry, this item is out of stock.");
+      } else {
+        showToast(`Full stock (${available}) already in cart.`);
+      }
+      return;
     }
+
+    if (finalQty < requested) {
+      showToast(`Stock limit: adding ${finalQty} more unit(s).`);
+    }
+
     setCart((c) => ({ ...c, [p._id]: (c[p._id] || 0) + finalQty }));
     api("/cart/add", { method: "POST", body: { productId: p._id, qty: finalQty }, auth: true })
       .then(() => {
         if (goToCart) navigate("/cart");
         else showToast("Item added successfully");
       })
-      .catch((e) => showToast(e.message || "Failed to add to cart"));
+      .catch((e) => {
+          // If server fails, revert local state
+          setCart(c => {
+              const n = { ...c };
+              n[p._id] = (n[p._id] || 0) - finalQty;
+              if (n[p._id] <= 0) delete n[p._id];
+              return n;
+          });
+          showToast(e.message || "Failed to add to cart");
+      });
   }
   function inc(p) {
     if (!getToken()) { navigate("/auth"); return; }
+    const inCart = cart[p?._id] || 0;
+    const available = p?.stock ?? 999;
+    
+    if (inCart >= available) {
+      showToast("Maximum stock reached");
+      return;
+    }
+
     setCart((c) => ({ ...c, [p._id]: (c[p._id] || 0) + 1 }));
-    api("/cart/add", { method: "POST", body: { productId: p._id, qty: 1 }, auth: true }).catch(() => { });
+    api("/cart/add", { method: "POST", body: { productId: p._id, qty: 1 }, auth: true }).catch(() => {
+        setCart(c => {
+            const n = { ...c };
+            n[p._id] = (n[p._id] || 1) - 1;
+            if (n[p._id] <= 0) delete n[p._id];
+            return n;
+        });
+    });
   }
   function dec(p) {
     if (!getToken()) { navigate("/auth"); return; }

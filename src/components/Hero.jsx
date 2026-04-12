@@ -54,10 +54,10 @@ export default function Hero() {
                   e.currentTarget.src = assets.main_banner_bg;
                 }}
               />
-              <div className="absolute inset-0 bg-gradient-to-r from-white/90 via-white/40 to-transparent md:from-white md:via-white/40"></div>
+              <div className="absolute inset-x-0 inset-y-0 bg-gradient-to-r from-white via-white/50 to-transparent md:to-transparent"></div>
               
               <div className="absolute inset-0 flex items-center px-6 md:px-16">
-                <div className="max-w-[280px] md:max-w-[420px] animate-fade-in flex flex-col items-start text-left">
+                <div className="max-w-[240px] sm:max-w-[320px] md:max-w-[420px] animate-fade-in flex flex-col items-start text-left">
                   <span className="inline-block text-emerald-600 font-extrabold tracking-widest text-[7px] md:text-[8px] uppercase bg-emerald-50/90 backdrop-blur-sm px-2 py-0.5 rounded-full mb-3 italic">
                     Premier Quality Store
                   </span>

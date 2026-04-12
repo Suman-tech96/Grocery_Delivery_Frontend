@@ -6,7 +6,7 @@ export default function Footer() {
       <div className="mx-auto max-w-7xl px-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 pb-20 border-b border-white/5">
           <div className="space-y-8">
-            <img src={assets.logo} alt="GreenCart" className="h-8 invert opacity-90" />
+            <img src={assets.logo_light} alt="GreenCart" className="h-8 opacity-90" />
             <p className="text-gray-400 text-sm leading-relaxed font-medium">
               We bridge the gap between fresh farms and your kitchen table. 
               Our mission is to provide the highest quality organic produce with 

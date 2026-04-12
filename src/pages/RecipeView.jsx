@@ -64,7 +64,7 @@ export default function RecipeView({ id, onRefreshCart, showToast }) {
         });
         
         if (ingredient) {
-          const totalQty = Math.max(1, Math.round(ingredient.qtyPerServe * serves));
+          const totalQty = 1; // Always add 1 quantity as per user requirement
           await api("/cart/add", { method: "POST", body: { productId: pid, qty: totalQty }, auth: true });
         }
       }
@@ -98,28 +98,28 @@ export default function RecipeView({ id, onRefreshCart, showToast }) {
         <img src={fileUrl(r.imageUrl)} alt={r.name} className="w-full h-full object-cover" />
         <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-white via-white/80 to-transparent"></div>
         
-        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 w-full max-w-4xl px-6 text-center">
-          <div className="flex justify-center gap-4 mb-6">
-            <span className="bg-emerald-600 text-white px-5 py-1.5 rounded-full text-xs font-black uppercase tracking-widest shadow-xl shadow-emerald-200">Featured Recipe</span>
+        <div className="absolute bottom-6 md:bottom-12 left-1/2 -translate-x-1/2 w-full max-w-4xl px-4 md:px-6 text-center">
+          <div className="flex justify-center gap-2 md:gap-4 mb-4 md:mb-6">
+            <span className="bg-emerald-600 text-white px-3 md:px-5 py-1 md:py-1.5 rounded-full text-[9px] md:text-xs font-black uppercase tracking-widest shadow-xl shadow-emerald-200">Featured Recipe</span>
             {(r.prepTime || r.cookTime) && (
-                <span className="bg-white px-5 py-1.5 rounded-full text-xs font-black text-gray-900 shadow-xl uppercase tracking-widest border border-gray-100 italic">Chef's Choice</span>
+                <span className="bg-white px-3 md:px-5 py-1 md:py-1.5 rounded-full text-[9px] md:text-xs font-black text-gray-900 shadow-xl uppercase tracking-widest border border-gray-100 italic">Chef's Choice</span>
             )}
           </div>
-          <h1 className="text-5xl md:text-7xl font-black text-gray-900 tracking-tighter mb-4">{r.name}</h1>
-          <div className="flex items-center justify-center gap-8 text-gray-400 font-bold uppercase text-[10px] tracking-[0.2em]">
+          <h1 className="text-3xl md:text-5xl lg:text-7xl font-black text-gray-900 tracking-tighter mb-4 leading-tight">{r.name}</h1>
+          <div className="flex flex-wrap items-center justify-center gap-4 md:gap-8 text-gray-400 font-bold uppercase text-[8px] md:text-[10px] tracking-[0.2em]">
             <div className="flex items-center gap-2">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
               <span>{parseInt(r.prepTime || 0) + parseInt(r.cookTime || 0)} Mins Total</span>
             </div>
-            <div className="flex items-center gap-2">
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
-              <span>Authentic Dish</span>
+            <div className="flex items-center gap-2 text-emerald-600">
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" /></svg>
+              <span className="text-emerald-500">Authentic Dish</span>
             </div>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-16 py-12">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 py-8 md:py-12">
         {/* Left Column: Ingredients */}
         <div className="lg:col-span-7 space-y-12">
           <section>

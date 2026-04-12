@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { fileUrl } from "../lib/api";
+import { navigate } from "../lib/router";
 
 export default function ProductCard({ p, onAdd }) {
   const price = p.offerPrice ?? p.price;
@@ -10,7 +11,13 @@ export default function ProductCard({ p, onAdd }) {
   const available = p.stock ?? 0;
   
   return (
-    <div className="group bg-white rounded-[1.2rem] border border-gray-100 p-2.5 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 flex flex-col gap-2.5 animate-fade-in relative overflow-hidden active:scale-[0.98]">
+    <div 
+      onClick={(e) => {
+        if (e.target.closest('button')) return;
+        navigate(`/product/${p._id}`);
+      }}
+      className="group bg-white rounded-[1.2rem] border border-gray-100 p-2.5 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-500 flex flex-col gap-2.5 animate-fade-in relative overflow-hidden active:scale-[0.98] cursor-pointer"
+    >
       {p.offerPrice && (
         <div className="absolute top-3 left-3 z-10 px-2 py-0.5 rounded-full bg-red-500 text-white text-[7px] font-black uppercase tracking-widest shadow-lg shadow-red-100">
           -{Math.max(0, Math.round(100 - (price / p.price) * 100))}%

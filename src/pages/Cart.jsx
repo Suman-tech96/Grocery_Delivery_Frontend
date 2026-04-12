@@ -126,10 +126,10 @@ export default function Cart({ cart = {}, onInc, onDec, onRemove, onClearCart })
   if (loading) return <div className="p-20 text-center font-black animate-pulse text-gray-200 uppercase tracking-[0.3em]">Mapping Essentials...</div>;
 
   return (
-    <section className="bg-white py-6 md:py-8 min-h-screen">
-      <div className="mx-auto max-w-7xl px-4 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+    <section className="bg-white py-4 md:py-8 min-h-screen">
+      <div className="mx-auto max-w-7xl px-4 flex flex-col lg:flex-row gap-8 lg:gap-12">
         {/* Cart List */}
-        <div className="lg:col-span-8 space-y-12">
+        <div className="flex-1 space-y-8 md:space-y-12">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b-2 border-emerald-600 pb-4">
             <div>
               <span className="text-emerald-600 font-extrabold tracking-[0.2em] text-[9px] uppercase bg-emerald-50 px-2 py-1 rounded-full italic">Your Selection</span>
@@ -144,14 +144,19 @@ export default function Cart({ cart = {}, onInc, onDec, onRemove, onClearCart })
               const available = p.stock ?? 0;
               return (
                 <div key={p._id} className="group relative bg-white rounded-[2.5rem] p-6 md:p-8 shadow-sm border border-gray-100 flex flex-col md:flex-row items-center gap-8 hover:shadow-2xl hover:border-emerald-200 transition-all animate-fade-in group">
-                  <div className="w-24 h-24 md:w-32 md:h-32 bg-gray-50 rounded-[2rem] p-4 flex items-center justify-center shrink-0">
+                  <div 
+                    onClick={() => navigate(`/product/${p._id}`)}
+                    className="w-24 h-24 md:w-32 md:h-32 bg-gray-50 rounded-[2rem] p-4 flex items-center justify-center shrink-0 cursor-pointer"
+                  >
                     <img src={fileUrl(p.images?.[0])} alt={p.name} className="w-full h-full object-contain mix-blend-multiply group-hover:scale-110 transition-transform duration-500" />
                   </div>
                   
                   <div className="flex-1 text-center md:text-left">
                     <div className="flex flex-col md:flex-row md:items-start justify-between gap-3 mb-4">
                         <div>
-                            <h3 className="text-base font-black text-gray-900 mb-0.5">{p.name}</h3>
+                        <div className="cursor-pointer" onClick={() => navigate(`/product/${p._id}`)}>
+                            <h3 className="text-base font-black text-gray-900 mb-0.5 hover:text-emerald-600 transition-colors">{p.name}</h3>
+                        </div>
                             <div className="text-[9px] font-black text-gray-400 uppercase tracking-widest">Category: {p.category}</div>
                         </div>
                         <div className="flex items-center justify-center bg-gray-50 rounded-xl p-1 border border-gray-100">
@@ -195,7 +200,7 @@ export default function Cart({ cart = {}, onInc, onDec, onRemove, onClearCart })
         </div>
 
         {/* Sidebar Summary */}
-        <aside className="lg:col-span-4 translate-y-0 lg:translate-y-12">
+        <aside className="w-full lg:w-[400px] lg:shrink-0">
           <div className="bg-white rounded-[1.5rem] p-6 md:p-8 text-gray-900 shadow-xl border border-emerald-100 sticky top-24">
             <h2 className="text-xl font-black mb-4 italic tracking-tighter">Order Summary</h2>
             

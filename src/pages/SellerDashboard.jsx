@@ -11,6 +11,7 @@ export default function SellerDashboard() {
   const [offerPrice, setOfferPrice] = useState("");
   const [stock, setStock] = useState("");
   const [description, setDescription] = useState("");
+  const [weight, setWeight] = useState("");
   const [imageFiles, setImageFiles] = useState([]);
   const [saving, setSaving] = useState(false);
   useEffect(() => {
@@ -37,10 +38,11 @@ export default function SellerDashboard() {
       fd.append("price", String(price));
       if (offerPrice) fd.append("offerPrice", String(offerPrice));
       if (description) fd.append("description", description);
+      if (weight) fd.append("weight", weight);
       if (stock) fd.append("stock", String(stock));
       imageFiles.forEach((f) => fd.append("images", f));
       await apiForm("/products", fd, { auth: true });
-      setName(""); setCategory(categories[0]?.path || "Vegetables"); setPrice(""); setOfferPrice(""); setDescription(""); setStock(""); setImageFiles([]);
+      setName(""); setCategory(categories[0]?.path || "Vegetables"); setPrice(""); setOfferPrice(""); setDescription(""); setWeight(""); setStock(""); setImageFiles([]);
       const res = await api("/products/mine", { auth: true });
       setMyProducts(res.products || []);
       alert("Product added");
@@ -78,6 +80,10 @@ export default function SellerDashboard() {
             <div>
               <label className="text-sm text-gray-600">Stock Quantity</label>
               <input className="w-full border rounded-lg px-3 py-2 mt-1" type="number" min="0" value={stock} onChange={(e)=>setStock(e.target.value)} />
+            </div>
+            <div>
+              <label className="text-sm text-gray-600">Weight / Measurement (e.g. 500g)</label>
+              <input className="w-full border rounded-lg px-3 py-2 mt-1" placeholder="500g, 1kg, Pack of 6" value={weight} onChange={(e)=>setWeight(e.target.value)} />
             </div>
             <div className="md:col-span-2">
               <label className="text-sm text-gray-600">Description</label>
@@ -238,8 +244,8 @@ export default function SellerDashboard() {
                       </div>
                     </td>
                     <td className="py-5 pr-4">
-                      <div className="text-xs font-black text-gray-900">{o.userId?.name || "Anonymous"}</div>
-                      <div className="text-[10px] text-gray-400">{o.userId?.email}</div>
+                      <div className="text-xs font-black text-gray-900">{o.userId?.name || "-"}</div>
+                      <div className="text-[10px] text-gray-400">{o.userId?.email || "-"}</div>
                     </td>
                     <td className="py-5 pr-4">
                       {o.assignedDeliveryId ? (
@@ -248,7 +254,7 @@ export default function SellerDashboard() {
                           <div className="text-[10px] text-gray-400">{o.assignedDeliveryId.email}</div>
                         </>
                       ) : (
-                        <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest italic">Unassigned</span>
+                        <span className="text-[10px] font-black text-amber-500 uppercase tracking-widest italic">-</span>
                       )}
                     </td>
                     <td className="py-5 pr-4">

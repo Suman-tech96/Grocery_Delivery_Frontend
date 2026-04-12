@@ -1,4 +1,5 @@
 import logo from "./logo.svg";
+import logo_light from "./logo_light.svg";
 import search_icon from "./search_icon.svg";
 import remove_icon from "./remove_icon.svg";
 import arrow_right_icon_colored from "./arrow_right_icon_colored.svg";
@@ -72,6 +73,7 @@ import barley_image from "./barley_image.png";
 
 export const assets = {
   logo,
+  logo_light,
   search_icon,
   remove_icon,
   arrow_right_icon_colored,

@@ -1,4 +1,4 @@
-import { assets } from "../assets/greencart/greencart_assets/assets";
+import { assets, dummyProducts } from "../assets/greencart/greencart_assets/assets";
 import { useEffect, useState } from "react";
 import { api, fileUrl } from "../lib/api";
 
@@ -47,9 +47,16 @@ export default function Product({ id, onAdd }) {
       api(`/products/${id}`),
       api("/products")
     ]).then(([res, all]) => {
-      setP(res.product || null);
+      let product = res.product || null;
+      if (!product) {
+        product = dummyProducts.find(x => x._id === id) || null;
+      }
+      setP(product);
       setList(all.products || []);
-    }).catch(() => setP(null))
+    }).catch(() => {
+      const fallback = dummyProducts.find(x => x._id === id) || null;
+      setP(fallback);
+    })
       .finally(() => setLoading(false));
 
     setSel(0);
@@ -77,10 +84,10 @@ export default function Product({ id, onAdd }) {
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16">
           {/* Gallery Section */}
-          <div className="lg:col-span-6 flex flex-col md:flex-row gap-8">
-            <div className="flex md:flex-col gap-4 order-2 md:order-1 shrink-0 overflow-auto pb-4 md:pb-0">
+          <div className="lg:col-span-6 flex flex-col md:flex-row gap-4 md:gap-8">
+            <div className="flex md:flex-col gap-4 order-2 md:order-1 shrink-0 overflow-auto pb-4 md:pb-0 px-1">
               {productImgs.map((im, i) => (
-                <button key={i} className={`w-20 h-20 md:w-24 md:h-24 rounded-[1.5rem] border-2 transition-all p-2 flex items-center justify-center bg-gray-50/50 ${sel === i ? 'border-emerald-500 shadow-lg shadow-emerald-50' : 'border-transparent hover:border-emerald-200'}`} onClick={() => setSel(i)}>
+                <button key={i} className={`w-16 h-16 md:w-24 md:h-24 rounded-2xl md:rounded-[1.5rem] border-2 transition-all p-2 flex items-center justify-center bg-gray-50/50 ${sel === i ? 'border-emerald-500 shadow-lg shadow-emerald-50' : 'border-transparent hover:border-emerald-200'}`} onClick={() => setSel(i)}>
                   <img src={fileUrl(im)} alt="" className="max-h-full max-w-full object-contain mix-blend-multiply" />
                 </button>
               ))}
@@ -88,19 +95,19 @@ export default function Product({ id, onAdd }) {
 
             <div className="flex-1 order-1 md:order-2">
               <div
-                className="rounded-[3rem] border border-gray-100 bg-gray-50/50 flex items-center justify-center relative overflow-hidden group cursor-crosshair min-h-[400px] md:min-h-[500px]"
+                className="rounded-[2.5rem] md:rounded-[3rem] border border-gray-100 bg-gray-50/50 flex items-center justify-center relative overflow-hidden group cursor-crosshair min-h-[300px] md:min-h-[500px]"
                 onMouseMove={handleMouseMove}
                 onMouseLeave={() => setZoomPos(p => ({ ...p, active: false }))}
               >
                 <img
                   src={fileUrl(productImgs[sel] || (productImgs[0] || ""))}
                   alt={p.name}
-                  className={`max-h-[30rem] w-full object-contain mix-blend-multiply transition-transform duration-200 ease-out ${zoomPos.active ? 'scale-[2.5]' : 'scale-100'}`}
+                  className={`max-h-[20rem] md:max-h-[30rem] w-full object-contain mix-blend-multiply transition-transform duration-200 ease-out ${zoomPos.active ? 'scale-[2.5]' : 'scale-100'}`}
                   style={{ transformOrigin: `${zoomPos.x}% ${zoomPos.y}%` }}
                 />
                 {!zoomPos.active && (
-                  <div className="absolute inset-x-0 bottom-8 flex justify-center pointer-events-none animate-bounce">
-                    <span className="text-[8px] font-black text-emerald-600 bg-white/80 backdrop-blur-md px-3 py-1.5 rounded-full uppercase tracking-widest shadow-sm">Hover to Explore Details</span>
+                  <div className="absolute inset-x-0 bottom-6 md:bottom-8 flex justify-center pointer-events-none animate-bounce">
+                    <span className="text-[7px] md:text-[8px] font-black text-emerald-600 bg-white/80 backdrop-blur-md px-3 py-1.5 rounded-full uppercase tracking-widest shadow-sm">Explore Details</span>
                   </div>
                 )}
               </div>
@@ -141,10 +148,17 @@ export default function Product({ id, onAdd }) {
               </div>
             </div>
 
-            <p className="text-gray-500 font-medium text-sm leading-relaxed mb-10 max-w-xl">
-              Our {p.name} is meticulously sourced to meet the highest standards of freshness and nutritional purity.
-              Perfect for your next culinary masterpiece.
-            </p>
+            <div className="flex flex-col gap-1.5 mb-10">
+              <p className="text-gray-500 font-medium text-sm leading-relaxed max-w-xl">
+                {p.description || `This premium ${p.weight || ''} ${p.name} is meticulously sourced to meet the highest standards of freshness and nutritional purity. Perfect for your next culinary masterpiece.`}
+              </p>
+              <div className="flex items-center gap-2 mt-4">
+                <div className="bg-gray-900 text-white px-3 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest">
+                  Stock: {available} Units
+                </div>
+                <span className="text-gray-300 text-[10px] font-bold uppercase tracking-widest">In Warehouse Reserve</span>
+              </div>
+            </div>
 
             <div className="space-y-6">
               <div className="flex flex-wrap items-center gap-4">

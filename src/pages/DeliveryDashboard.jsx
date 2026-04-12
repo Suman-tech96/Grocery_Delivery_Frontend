@@ -78,7 +78,7 @@ function OrderCard({ o, onPick, onDeliver, onNote, onProof }) {
             </div>
             <div>
               <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest leading-none mb-1">Customer</p>
-              <h3 className="text-xl font-black text-gray-900 tracking-tighter leading-tight italic">{customer.name || "Guest User"}</h3>
+              <h3 className="text-xl font-black text-gray-900 tracking-tighter leading-tight italic">{customer.name || "-"}</h3>
             </div>
           </div>
 
