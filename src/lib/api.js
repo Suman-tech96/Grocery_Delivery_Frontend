@@ -49,7 +49,7 @@ export async function apiForm(path, formData, { auth = false, method = "POST" } 
 export function fileUrl(url) {
   if (!url) return "";
   if (/^https?:\/\//i.test(url)) return url;
-  const base = (import.meta.env.VITE_API_URL || "http://localhost:5000/api").replace(/\/api$/, "");
+  const base = (import.meta.env.VITE_API_URL || "https://grocery-delivery-backend-dvr3.onrender.com").replace(/\/api$/, "");
   if (url.startsWith("/")) return `${base}${url}`;
   return `${base}/${url}`;
 }
