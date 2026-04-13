@@ -6,6 +6,7 @@ import { navigate } from "../lib/router";
 export default function Cart({ cart = {}, onInc, onDec, onRemove, onClearCart }) {
   const [productMap, setProductMap] = useState({});
   const [loading, setLoading] = useState(true);
+  const [placing, setPlacing] = useState(false);
 
   useEffect(() => {
     api("/products").then((res) => {
@@ -25,6 +26,7 @@ export default function Cart({ cart = {}, onInc, onDec, onRemove, onClearCart })
   const tax = +(subtotal * 0.02).toFixed(2);
   const total = +(subtotal + tax).toFixed(2);
   const [method, setMethod] = useState("Cash On Delivery");
+  const [paymentLoading, setPaymentLoading] = useState(false);
 
   const addr = (() => {
     try { return JSON.parse(localStorage.getItem("shippingAddress") || "null"); }
@@ -61,66 +63,94 @@ export default function Cart({ cart = {}, onInc, onDec, onRemove, onClearCart })
       totalAmount: total,
       address: formatAddress(addr)
     };
+    setPlacing(true);
     if (method === "Cash On Delivery") {
       try{
         await api("/orders/cod",{method:"POST", body: payload, auth:true});
         alert("Order placed successfully");
         onClearCart && onClearCart();
         navigate("/orders");
-      } catch {
-        alert("Could not place order. Please try again.");
+      } catch (e) {
+        alert(e.message || "Could not place order. Please try again.");
+      } finally {
+        setPlacing(false);
       }
       return;
     }
-    if (method === "UPI") {
+    if (method === "Digital Payment") {
       try{
+        setPaymentLoading(true);
         const { order, key } = await api("/payments/razorpay/order",{method:"POST", body:{ amount: total }, auth:true});
         await loadRazorpayAndPay({ key, order, payload });
       } catch(e){
         alert(e.message || "Payment initialization failed");
+      } finally {
+        setPlacing(false);
+        setPaymentLoading(false);
       }
       return;
     }
   }
 
   async function loadRazorpayAndPay({ key, order, payload }){
-    const s = document.createElement("script");
-    s.src = "https://checkout.razorpay.com/v1/checkout.js";
-    s.onload = () => {
-        const options = {
-            key,
-            amount: order.amount,
-            currency: order.currency,
-            name: "GreenCart",
-            description: "Gourmet Grocery Payment",
-            order_id: order.id,
-            handler: async function (response){
-              try{
-                await api("/payments/razorpay/verify",{
-                  method:"POST",
-                  auth:true,
-                  body:{
-                    razorpay_order_id: response.razorpay_order_id,
-                    razorpay_payment_id: response.razorpay_payment_id,
-                    razorpay_signature: response.razorpay_signature,
-                    ...payload
-                  }
-                });
-                onClearCart && onClearCart();
-                navigate("/orders");
-              } catch { alert("Verification failed"); }
-            },
-            prefill: {
-              name: `${addr?.firstName || ""} ${addr?.lastName || ""}`.trim(),
-              email: addr?.email || "",
-              contact: addr?.phone || ""
-            },
-            theme: { color: "#10b981" }
+    return new Promise((resolve, reject) => {
+        const s = document.createElement("script");
+        s.src = "https://checkout.razorpay.com/v1/checkout.js";
+        s.async = true;
+        s.onerror = () => {
+            alert("Failed to load payment gateway. Please check your internet connection.");
+            reject(new Error("Script load error"));
         };
-        const rz = new window.Razorpay(options);
-        rz.open();
-    };
-    document.body.appendChild(s);
+        s.onload = () => {
+            const options = {
+                key,
+                amount: order.amount,
+                currency: order.currency,
+                name: "GreenCart",
+                description: "Gourmet Grocery Payment",
+                order_id: order.id,
+                handler: async function (response){
+                  try{
+                    setPaymentLoading(true);
+                    await api("/payments/razorpay/verify",{
+                      method:"POST",
+                      auth:true,
+                      body:{
+                        razorpay_order_id: response.razorpay_order_id,
+                        razorpay_payment_id: response.razorpay_payment_id,
+                        razorpay_signature: response.razorpay_signature,
+                        ...payload
+                      }
+                    });
+                    onClearCart && onClearCart();
+                    navigate("/orders");
+                    resolve();
+                  } catch (err) { 
+                    alert(err.message || "Payment verification failed"); 
+                    reject(err);
+                  } finally {
+                    setPaymentLoading(false);
+                  }
+                },
+                modal: {
+                    ondismiss: function() {
+                        setPlacing(false);
+                        setPaymentLoading(false);
+                    }
+                },
+                prefill: {
+                  name: `${addr?.firstName || ""} ${addr?.lastName || ""}`.trim(),
+                  email: addr?.email || "",
+                  contact: addr?.phone || ""
+                },
+                theme: { color: "#10b981" }
+            };
+            console.log("RAZORPAY_INIT_OPTIONS:", options);
+            const rz = new window.Razorpay(options);
+            rz.open();
+        };
+        document.body.appendChild(s);
+    });
   }
 
   if (loading) return <div className="p-20 text-center font-black animate-pulse text-gray-200 uppercase tracking-[0.3em]">Mapping Essentials...</div>;
@@ -245,14 +275,14 @@ export default function Cart({ cart = {}, onInc, onDec, onRemove, onClearCart })
                 <div>
                     <label className="text-[8px] font-black text-gray-400 uppercase tracking-widest block mb-2">Gateway Method</label>
                     <div className="grid grid-cols-2 gap-2">
-                        {["Cash On Delivery", "UPI"].map((m) => (
+                        {["Cash On Delivery", "Digital Payment"].map((m) => (
                             <button 
                                 key={m}
                                 onClick={() => setMethod(m)}
                                 className={`py-2 rounded-lg text-[8px] font-black uppercase tracking-widest transition-all ${
                                     method === m ? 'bg-emerald-600 text-white shadow-md' : 'bg-gray-50 text-gray-400 border border-gray-100 hover:bg-emerald-50 hover:text-emerald-700'
                                 }`}
-                            >{m === "UPI" ? "Digital" : "Cash (COD)"}</button>
+                            >{m === "Digital Payment" ? "Digital" : "Cash (COD)"}</button>
                         ))}
                     </div>
                 </div>
@@ -260,14 +290,35 @@ export default function Cart({ cart = {}, onInc, onDec, onRemove, onClearCart })
 
             <button 
                 onClick={handlePlaceOrder}
-                className="w-full bg-emerald-600 text-white py-3.5 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] shadow-lg hover:bg-gray-900 transition-all hover:scale-[1.02] active:scale-95 shadow-emerald-50"
+                disabled={placing || items.length === 0}
+                className={`w-full bg-emerald-600 text-white py-3.5 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] shadow-lg transition-all hover:scale-[1.02] active:scale-95 shadow-emerald-50 ${placing ? 'opacity-70 cursor-wait' : 'hover:bg-gray-900'} relative overflow-hidden group`}
             >
-                Confirm Order
+                {placing ? (
+                    <span className="flex items-center justify-center gap-2">
+                        <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Initializing...
+                    </span>
+                ) : 'Confirm Order'}
             </button>
             <p className="text-[7px] text-center text-gray-300 uppercase font-black tracking-widest mt-4">Secure Encrypted Checkout</p>
           </div>
         </aside>
       </div>
+
+      {/* Payment Loading Overlay */}
+      {paymentLoading && (
+        <div className="fixed inset-0 bg-white/80 backdrop-blur-md z-[9999] flex flex-col items-center justify-center animate-fade-in">
+            <div className="relative">
+                <div className="w-20 h-20 border-4 border-emerald-100 rounded-full"></div>
+                <div className="w-20 h-20 border-4 border-emerald-600 rounded-full border-t-transparent animate-spin absolute top-0 left-0"></div>
+            </div>
+            <h2 className="mt-8 text-xl font-black italic tracking-tighter text-gray-900 uppercase">Securing Gateway...</h2>
+            <p className="mt-2 text-[9px] font-black text-gray-400 uppercase tracking-[0.3em] animate-pulse">Do not refresh this page</p>
+        </div>
+      )}
     </section>
   );
 }

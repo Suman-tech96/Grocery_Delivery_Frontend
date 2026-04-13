@@ -34,11 +34,11 @@ export default function Header({ cartCount = 0, searchQuery = "", setSearch, use
     : [];
 
   return (
-    <header className={`sticky top-0 z-[100] transition-all duration-300 ${isScrolled ? "bg-white/80 backdrop-blur-md shadow-lg py-2" : "bg-white py-4"}`}>
-      <div className="mx-auto max-w-7xl px-6 flex items-center justify-between" ref={wrapRef}>
-        <div className="flex items-center gap-10">
+    <header className={`sticky top-0 z-[100] w-full max-w-full overflow-x-hidden transition-all duration-300 ${isScrolled ? "bg-white/80 backdrop-blur-md shadow-lg py-2" : "bg-white py-4"}`}>
+      <div className="mx-auto max-w-7xl w-full px-4 md:px-6 flex items-center justify-between" ref={wrapRef}>
+        <div className="flex items-center gap-4 lg:gap-10">
           <a href="/" className="shrink-0">
-            <img src={assets.logo} alt="GreenCart" className="h-5 md:h-7 hover:scale-105 transition-transform" />
+            <img src={assets.logo} alt="GreenCart" className="h-4 md:h-7 hover:scale-105 transition-transform" />
           </a>
 
           <nav className="hidden lg:flex items-center gap-8">
@@ -110,13 +110,13 @@ export default function Header({ cartCount = 0, searchQuery = "", setSearch, use
             )}
           </div>
 
-          <div className="flex items-center gap-2 md:gap-5">
+          <div className="flex items-center gap-1.5 md:gap-5">
             {/* Mobile Search Toggle */}
             <button 
-              className="lg:hidden p-2.5 rounded-xl bg-gray-50 text-gray-900 border border-gray-100"
+              className="lg:hidden p-2 rounded-xl bg-gray-50 text-gray-900 border border-gray-100"
               onClick={() => setMobileSearch(!mobileSearch)}
             >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
             </button>
 
             {user ? <Dropdown user={user} onLogout={onLogout} /> : (
@@ -125,18 +125,18 @@ export default function Header({ cartCount = 0, searchQuery = "", setSearch, use
               </a>
             )}
 
-            <a href="/cart" className="group relative flex items-center justify-center p-2.5 md:p-3 rounded-xl md:rounded-2xl bg-gray-900 text-white hover:bg-emerald-600 transition-all shadow-xl shadow-gray-200">
+            <a href="/cart" className="group relative flex items-center justify-center p-2 md:p-3 rounded-xl md:rounded-2xl bg-gray-900 text-white hover:bg-emerald-600 transition-all shadow-xl shadow-gray-200">
               <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
               {cartCount > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 w-5 h-5 md:w-6 md:h-6 flex items-center justify-center rounded-lg md:rounded-xl bg-emerald-500 text-white text-[9px] md:text-[10px] font-black border-2 border-white">{cartCount}</span>
+                <span className="absolute -top-1.5 -right-1.5 w-5 h-5 md:w-6 md:h-6 flex items-center justify-center rounded-lg md:rounded-xl bg-emerald-500 text-white text-[10px] font-black border-2 border-white">{cartCount}</span>
               )}
             </a>
 
             <button
-              className="lg:hidden p-2.5 rounded-xl bg-gray-900 text-white"
+              className="lg:hidden p-2 rounded-xl bg-gray-900 text-white"
               onClick={() => setOpen(!open)}
             >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 6h16M4 12h16m-7 6h7" /></svg>
+              <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M4 6h16M4 12h16m-7 6h7" /></svg>
             </button>
           </div>
         </div>
@@ -162,7 +162,7 @@ export default function Header({ cartCount = 0, searchQuery = "", setSearch, use
       )}
 
       {/* Mobile Menu Drawer */}
-      <div className={`fixed inset-y-0 right-0 w-full max-w-sm bg-white shadow-[-20px_0_60px_-15px_rgba(0,0,0,0.1)] z-[200] transform transition-transform duration-500 ease-in-out lg:hidden ${open ? 'translate-x-0' : 'translate-x-full'}`}>
+      <div className={`fixed inset-y-0 right-0 w-full max-w-sm bg-white shadow-[-20px_0_60px_-15px_rgba(0,0,0,0.1)] z-[200] transform transition-all duration-500 ease-in-out lg:hidden ${open ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0 pointer-events-none'}`}>
         <div className="h-full flex flex-col p-8 overflow-y-auto">
           <div className="flex items-center justify-between mb-12">
             <img src={assets.logo} alt="" className="h-6" />
@@ -206,7 +206,7 @@ export default function Header({ cartCount = 0, searchQuery = "", setSearch, use
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
               </a>
             ) : (
-                <div className="text-[9px] font-black text-gray-300 uppercase tracking-widest">Logged in as {user?.role}</div>
+                <div className="text-[10px] font-black text-gray-300 uppercase tracking-widest leading-none">Logged in as {user?.role}</div>
             )}
           </div>
         </div>

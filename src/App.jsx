@@ -30,6 +30,13 @@ export default function App() {
   const [route, setRoute] = useState(() => currentPath());
   const [search, setSearch] = useState("");
   const [validIds, setValidIds] = useState(null);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+  }, [route]);
   useEffect(() => {
     const onPop = () => setRoute(currentPath());
     window.addEventListener("popstate", onPop);

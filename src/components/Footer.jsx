@@ -57,7 +57,7 @@ export default function Footer() {
               </div>
               <div>
                 <p className="text-gray-500 text-[10px] uppercase font-black tracking-widest mb-1">Headquarters</p>
-                <p className="text-white font-bold text-sm">123 Green Way, Organic Valley</p>
+                <p className="text-white font-bold text-sm">Balasore, Odisha ,Organic Valley</p>
               </div>
               <div className="pt-4 flex items-center gap-3">
                 <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>

@@ -11,9 +11,16 @@
   --bg-main: #f9fafb;
 }
 
+#root {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
 @layer base {
   body {
-    @apply bg-gray-50 text-gray-800 antialiased;
+    @apply bg-gray-50 text-gray-800 antialiased overflow-x-hidden;
     font-family: 'Plus Jakarta Sans', sans-serif;
     font-size: 0.875rem; /* 14px base for extra compact UI */
     line-height: 1.5;

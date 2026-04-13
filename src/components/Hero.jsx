@@ -58,7 +58,7 @@ export default function Hero() {
               
               <div className="absolute inset-0 flex items-center px-6 md:px-16">
                 <div className="max-w-[240px] sm:max-w-[320px] md:max-w-[420px] animate-fade-in flex flex-col items-start text-left">
-                  <span className="inline-block text-emerald-600 font-extrabold tracking-widest text-[7px] md:text-[8px] uppercase bg-emerald-50/90 backdrop-blur-sm px-2 py-0.5 rounded-full mb-3 italic">
+                  <span className="inline-block text-emerald-600 font-extrabold tracking-widest text-[10px] md:text-[11px] uppercase bg-emerald-50/90 backdrop-blur-sm px-2.5 py-1 rounded-full mb-3 italic">
                     Premier Quality Store
                   </span>
                   <h1 className="text-xl md:text-3xl lg:text-4xl font-black text-gray-900 leading-[1.1] md:leading-[1.15] tracking-tighter whitespace-pre-line mb-4">

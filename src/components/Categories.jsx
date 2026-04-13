@@ -2,8 +2,8 @@ import { categories } from "../assets/greencart/greencart_assets/assets";
 
 export default function Categories() {
   return (
-    <section className="bg-white py-12 md:py-20 overflow-hidden">
-      <div className="mx-auto max-w-7xl px-6">
+    <section className="bg-white py-12 md:py-20 w-full max-w-full overflow-hidden">
+      <div className="mx-auto max-w-7xl w-full px-4 md:px-6">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4 animate-fade-in">
           <div>
             <span className="text-emerald-600 font-extrabold tracking-[0.2em] text-[9px] uppercase bg-emerald-50 px-3 py-1.5 rounded-full italic">Explore by Kind</span>
@@ -18,8 +18,8 @@ export default function Categories() {
           {categories.map((c, idx) => (
             <a
               key={c.text}
-              href={`category/${encodeURIComponent(c.path)}`}
-              className="group relative flex flex-col items-center bg-gray-50 rounded-[2.5rem] p-6 transition-all duration-500 hover:bg-emerald-600 hover:-translate-y-2 hover:shadow-2xl hover:shadow-emerald-200 animate-fade-in"
+              href={`/category/${encodeURIComponent(c.path)}`}
+              className="group relative flex flex-col items-center bg-gray-50 rounded-[1.5rem] md:rounded-[2.5rem] p-4 md:p-6 transition-all duration-500 hover:bg-emerald-600 hover:-translate-y-2 hover:shadow-2xl hover:shadow-emerald-200 animate-fade-in"
               style={{ animationDelay: `${idx * 50}ms` }}
             >
               <div className="relative w-full aspect-square bg-white rounded-[2rem] p-4 mb-4 flex items-center justify-center shadow-inner group-hover:scale-95 transition-transform duration-500 overflow-hidden">

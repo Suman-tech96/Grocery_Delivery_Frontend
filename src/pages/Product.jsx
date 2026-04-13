@@ -5,7 +5,7 @@ import { api, fileUrl } from "../lib/api";
 function RelatedCard({ p, onAdd }) {
   const price = p.offerPrice ?? p.price;
   return (
-    <div className="group bg-white rounded-[2rem] border border-gray-100 p-5 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all">
+    <div className="group bg-white rounded-[1.5rem] md:rounded-[2rem] p-3 md:p-5 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all">
       <a href={`#/product/${p._id}`} className="block aspect-square bg-gray-50 rounded-2xl overflow-hidden p-4 mb-4">
         <img src={fileUrl(p.images?.[0])} alt={p.name} className="w-full h-full object-contain mix-blend-multiply group-hover:scale-110 transition-transform duration-500" />
       </a>
@@ -212,7 +212,7 @@ export default function Product({ id, onAdd }) {
             <a href="/all-products" className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-emerald-600 transition-colors">View Entire Collection</a>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8">
+          <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 md:gap-8">
             {related.map((rp) => (
               <RelatedCard key={rp._id} p={rp} onAdd={onAdd} />
             ))}
