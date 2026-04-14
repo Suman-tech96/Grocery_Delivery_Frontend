@@ -16,7 +16,8 @@ export default function Header({ cartCount = 0, searchQuery = "", setSearch, use
 
     function onDocClick(e) {
       if (!wrapRef.current) return;
-      if (!wrapRef.current.contains(e.target)) {
+      // Also check if click is inside the drawer or other overlay elements
+      if (!wrapRef.current.contains(e.target) && !e.target.closest('.mobile-drawer') && !e.target.closest('.search-overlay')) {
         setOpen(false);
         setMobileSearch(false);
       }
@@ -34,10 +35,10 @@ export default function Header({ cartCount = 0, searchQuery = "", setSearch, use
     : [];
 
   return (
-    <header className={`sticky top-0 z-[100] w-full max-w-full overflow-x-hidden transition-all duration-300 ${isScrolled ? "bg-white/80 backdrop-blur-md shadow-lg py-2" : "bg-white py-4"}`}>
+    <header className={`sticky top-0 z-[100] w-full transition-all duration-300 ${isScrolled ? "bg-white/98 backdrop-blur-md shadow-lg py-1.5" : "bg-white py-3 md:py-4"}`}>
       <div className="mx-auto max-w-7xl w-full px-4 md:px-6 flex items-center justify-between" ref={wrapRef}>
         <div className="flex items-center gap-4 lg:gap-10">
-          <a href="/" className="shrink-0">
+          <a href="/" onClick={(e) => { e.preventDefault(); navigate("/"); }} className="shrink-0">
             <img src={assets.logo} alt="GreenCart" className="h-4 md:h-7 hover:scale-105 transition-transform" />
           </a>
 
@@ -60,6 +61,7 @@ export default function Header({ cartCount = 0, searchQuery = "", setSearch, use
               <a
                 key={item.name}
                 href={item.path}
+                onClick={(e) => { e.preventDefault(); navigate(item.path); }}
                 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 hover:text-emerald-600 transition-colors"
               >
                 {item.name}
@@ -125,7 +127,11 @@ export default function Header({ cartCount = 0, searchQuery = "", setSearch, use
               </a>
             )}
 
-            <a href="/cart" className="group relative flex items-center justify-center p-2 md:p-3 rounded-xl md:rounded-2xl bg-gray-900 text-white hover:bg-emerald-600 transition-all shadow-xl shadow-gray-200">
+            <a 
+              href="/cart" 
+              onClick={(e) => { e.preventDefault(); navigate("/cart"); }}
+              className="group relative flex items-center justify-center p-2 md:p-3 rounded-xl md:rounded-2xl bg-gray-900 text-white hover:bg-emerald-600 transition-all shadow-xl shadow-gray-200"
+            >
               <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
               {cartCount > 0 && (
                 <span className="absolute -top-1.5 -right-1.5 w-5 h-5 md:w-6 md:h-6 flex items-center justify-center rounded-lg md:rounded-xl bg-emerald-500 text-white text-[10px] font-black border-2 border-white">{cartCount}</span>
@@ -144,7 +150,7 @@ export default function Header({ cartCount = 0, searchQuery = "", setSearch, use
 
       {/* Mobile Search Overlay */}
       {mobileSearch && (
-        <div className="lg:hidden absolute top-full inset-x-0 bg-white border-t border-gray-100 p-4 shadow-xl animate-fade-in z-[110]">
+        <div className="search-overlay lg:hidden absolute top-full inset-x-0 bg-white border-t border-gray-100 p-4 shadow-xl animate-fade-in z-[110]">
           <div className="flex items-center gap-3 bg-gray-50 rounded-xl px-4 py-2.5 border border-emerald-100 shadow-inner">
             <svg className="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
             <input 
@@ -162,11 +168,11 @@ export default function Header({ cartCount = 0, searchQuery = "", setSearch, use
       )}
 
       {/* Mobile Menu Drawer */}
-      <div className={`fixed inset-y-0 right-0 w-full max-w-sm bg-white shadow-[-20px_0_60px_-15px_rgba(0,0,0,0.1)] z-[200] transform transition-all duration-500 ease-in-out lg:hidden ${open ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0 pointer-events-none'}`}>
+      <div className={`mobile-drawer fixed inset-y-0 right-0 w-[90%] sm:w-full sm:max-w-sm bg-white shadow-[-20px_0_60px_-15px_rgba(0,0,0,0.1)] z-[200] transform transition-all duration-500 ease-in-out lg:hidden ${open ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0 pointer-events-none'}`}>
         <div className="h-full flex flex-col p-8 overflow-y-auto">
-          <div className="flex items-center justify-between mb-12">
-            <img src={assets.logo} alt="" className="h-6" />
-            <button onClick={() => setOpen(false)} className="p-2.5 bg-gray-50 rounded-xl hover:bg-red-50 hover:text-red-500 transition-colors">
+          <div className="flex items-center justify-between mb-8 sm:mb-12">
+            <img src={assets.logo} alt="" className="h-5 sm:h-6" />
+            <button onClick={() => setOpen(false)} className="p-2 bg-gray-100 rounded-xl hover:bg-red-50 hover:text-red-500 transition-all active:scale-95 shadow-sm">
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" /></svg>
             </button>
           </div>
@@ -192,7 +198,7 @@ export default function Header({ cartCount = 0, searchQuery = "", setSearch, use
                 key={item.name}
                 href={item.path}
                 className="block text-2xl font-black text-gray-900 hover:text-emerald-600 hover:translate-x-2 transition-all"
-                onClick={() => setOpen(false)}
+                onClick={(e) => { e.preventDefault(); navigate(item.path); setOpen(false); }}
               >
                 {item.name}
               </a>
@@ -201,7 +207,11 @@ export default function Header({ cartCount = 0, searchQuery = "", setSearch, use
 
           <div className="mt-auto pt-8 border-t border-gray-50">
             {!(user?.role === "seller" || user?.role === "admin" || user?.role === "delivery") ? (
-              <a href="/auth" className="flex items-center gap-3 text-lg font-black text-emerald-600 italic" onClick={() => setOpen(false)}>
+              <a 
+                href="/auth" 
+                className="flex items-center gap-3 text-lg font-black text-emerald-600 italic" 
+                onClick={(e) => { e.preventDefault(); navigate("/auth"); setOpen(false); }}
+              >
                 Unlock Partner Potential
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
               </a>
@@ -230,9 +240,9 @@ function Dropdown({ user, onLogout }) {
   }, []);
 
   return (
-    <div className="relative" ref={ref}>
+    <div className="relative isolate" ref={ref}>
       <button
-        className="flex items-center gap-3 p-1.5 rounded-2xl bg-gray-50 border border-gray-100 hover:border-emerald-200 transition-all"
+        className="flex items-center gap-2 md:gap-3 p-1 md:p-1.5 rounded-2xl bg-gray-50 border border-gray-100 hover:border-emerald-200 transition-all"
         onClick={() => setOpen(!open)}
       >
         <img
@@ -247,8 +257,12 @@ function Dropdown({ user, onLogout }) {
         </div>
       </button>
       {open && (
-        <div className="absolute right-0 mt-4 w-48 rounded-[2rem] bg-white shadow-2xl border border-gray-50 p-2 animate-bounce-in overflow-hidden z-[200]">
-          <a href="/profile" className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold text-gray-600 hover:bg-emerald-50 hover:text-emerald-700 transition-colors" onClick={() => setOpen(false)}>
+        <div className="absolute right-0 mt-4 w-52 rounded-[2rem] bg-white shadow-2xl border border-gray-100 p-2.5 animate-bounce-in z-[300]">
+          <a 
+            href="/profile" 
+            className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold text-gray-600 hover:bg-emerald-50 hover:text-emerald-700 transition-colors" 
+            onClick={(e) => { e.preventDefault(); navigate("/profile"); setOpen(false); }}
+          >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
             Account
           </a>

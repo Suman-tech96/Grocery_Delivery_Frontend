@@ -1,5 +1,4 @@
-const BASE_URL = import.meta.env.VITE_API_URL || "https://grocery-delivery-backend-dvr3.onrender.com/api";
-// const BASE_URL = "https://grocery-delivery-backend-drv3.onrender.com/api";
+const BASE_URL = import.meta.env.VITE_API_URL || (window.location.hostname === "localhost" ? "http://localhost:5000/api" : "https://grocery-delivery-backend-dvr3.onrender.com/api");
 export function getToken() {
   return localStorage.getItem("token") || "";
 }

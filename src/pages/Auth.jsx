@@ -40,8 +40,8 @@ export default function Auth() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-6 lg:px-8">
-      <div className="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 bg-white rounded-[3rem] overflow-hidden shadow-2xl border border-gray-100 animate-fade-in min-h-[700px] items-stretch">
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center py-6 md:py-12 px-4 md:px-6 lg:px-8">
+      <div className="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 bg-white rounded-3xl md:rounded-[3rem] overflow-hidden shadow-2xl border border-gray-100 animate-fade-in min-h-0 md:min-h-[700px] items-stretch">
         {/* Visual Side */}
         <div className="hidden lg:block relative group overflow-hidden bg-emerald-50 h-full border-r border-gray-100">
           <img
@@ -118,7 +118,7 @@ export default function Auth() {
 
           <div className="mt-8 text-center">
             {mode === "login" ? (
-              <button onClick={() => navigate("/forgot")} className="text-[10px] font-black text-emerald-600 uppercase tracking-widest border-b border-emerald-500/30 pb-0.5">Recovery Access Key</button>
+              <button onClick={() => navigate("/forgot")} className="text-[10px] font-black text-emerald-600 uppercase tracking-widest border-b border-emerald-500/30 pb-0.5">Forgot Password? (Recovery Key)</button>
             ) : null}
           </div>
         </div>

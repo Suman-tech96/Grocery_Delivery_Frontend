@@ -230,8 +230,8 @@ export default function Cart({ cart = {}, onInc, onDec, onRemove, onClearCart })
         </div>
 
         {/* Sidebar Summary */}
-        <aside className="w-full lg:w-[400px] lg:shrink-0">
-          <div className="bg-white rounded-[1.5rem] p-6 md:p-8 text-gray-900 shadow-xl border border-emerald-100 sticky top-24">
+        <aside className="w-full lg:w-[400px] lg:shrink-0 mt-8 lg:mt-0">
+          <div className="bg-white rounded-3xl lg:rounded-[1.5rem] p-5 sm:p-6 md:p-8 text-gray-900 shadow-xl border border-emerald-100 lg:sticky lg:top-24">
             <h2 className="text-xl font-black mb-4 italic tracking-tighter">Order Summary</h2>
             
             <div className="space-y-3 mb-6 pb-4 border-b border-gray-100">

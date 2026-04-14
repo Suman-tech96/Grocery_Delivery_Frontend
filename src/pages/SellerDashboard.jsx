@@ -139,7 +139,17 @@ export default function SellerDashboard() {
           <div className="space-y-4">
             {orders.slice(0, 10).map((o) => (
               <div key={o._id} className="grid grid-cols-2 md:grid-cols-6 gap-4 items-center p-4 rounded-xl border border-gray-100 hover:border-emerald-100 hover:bg-emerald-50/10 transition-all group">
-                <div className="text-xs font-black text-gray-900 italic">#{o._id.slice(-8).toUpperCase()}</div>
+                <div 
+                  className="text-xs font-black text-gray-900 italic cursor-pointer hover:text-emerald-600 transition-colors"
+                  onClick={() => {
+                    setAssignOrderId(o._id);
+                    setStatusOrderId(o._id);
+                    window.scrollTo({ top: document.body.querySelector('form')?.offsetTop || 1000, behavior: 'smooth' });
+                  }}
+                  title="Click to manage this order"
+                >
+                  #{o._id.slice(-8).toUpperCase()}
+                </div>
                 <div className="text-[10px] font-black text-gray-400 uppercase tracking-tight">{new Date(o.createdAt).toLocaleString()}</div>
                 <div className="text-sm font-black text-gray-900 italic">₹{o.totalAmount || "-"}</div>
                 <div className="flex justify-center">
@@ -204,7 +214,7 @@ export default function SellerDashboard() {
             }} className="space-y-2">
               <div className="text-sm font-semibold text-gray-800">Send Announcement to Subscribers</div>
               <input name="title" className="w-full border rounded-lg px-3 py-2" placeholder="Subject/Title" required />
-              <textarea name="msg" className="w-full border rounded-lg px-3 py-2" placeholder="Your message..." required />
+              <textarea name="msg" rows="3" className="w-full border rounded-lg px-3 py-2" placeholder="Your message..." required />
               <button className="px-4 py-2 rounded-lg bg-purple-600 text-white text-sm">Send Announcement</button>
             </form>
           </div>
@@ -230,7 +240,17 @@ export default function SellerDashboard() {
                 {orders.map((o) => (
                   <tr key={o._id} className="group hover:bg-white transition-colors">
                     <td className="py-5 pr-4">
-                      <div className="text-xs font-black text-gray-900 italic">#{o._id.slice(-8).toUpperCase()}</div>
+                      <div 
+                        className="text-xs font-black text-gray-900 italic cursor-pointer hover:text-emerald-600 transition-colors"
+                        onClick={() => {
+                          setAssignOrderId(o._id);
+                          setStatusOrderId(o._id);
+                          window.scrollTo({ top: document.body.querySelector('form')?.offsetTop || 1000, behavior: 'smooth' });
+                        }}
+                        title="Click to manage this order"
+                      >
+                        #{o._id.slice(-8).toUpperCase()}
+                      </div>
                       <div className="text-[9px] font-black text-gray-400 uppercase tracking-widest mt-1">{new Date(o.createdAt).toLocaleDateString()}</div>
                     </td>
                     <td className="py-5 pr-4">
@@ -276,8 +296,20 @@ export default function SellerDashboard() {
                           </div>
                         )}
                         <button 
+                          onClick={() => {
+                            setAssignOrderId(o._id);
+                            setStatusOrderId(o._id);
+                            window.scrollTo({ top: document.body.querySelector('form')?.offsetTop || 1000, behavior: 'smooth' });
+                          }}
+                          className="p-2 bg-emerald-600 text-white rounded-xl hover:bg-emerald-700 transition-colors shadow-sm"
+                          title="Manage Status / Assign Partner"
+                        >
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" /></svg>
+                        </button>
+                        <button 
                           onClick={() => alert(`Mission Logs:\n${o.deliveryNotes?.map(n => `[${n.role}] ${n.message} (@ ${new Date(n.at).toLocaleString()})`).join('\n') || "No logs available"}`)}
                           className="p-2 bg-gray-900 text-white rounded-xl hover:bg-indigo-600 transition-colors shadow-sm"
+                          title="View Logs"
                         >
                           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                         </button>
