@@ -14,15 +14,15 @@ export default function Categories() {
           </p>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-4 md:gap-6">
+        <div className="flex overflow-x-auto pb-6 -mx-4 px-4 scrollbar-hide md:grid md:grid-cols-4 lg:grid-cols-7 gap-4 md:gap-6 md:pb-0 md:mx-0 md:px-0">
           {categories.map((c, idx) => (
             <a
               key={c.text}
               href={`/category/${encodeURIComponent(c.path)}`}
-              className="group relative flex flex-col items-center bg-gray-50 rounded-[1.5rem] md:rounded-[2.5rem] p-4 md:p-6 transition-all duration-500 hover:bg-emerald-600 hover:-translate-y-2 hover:shadow-2xl hover:shadow-emerald-200 animate-fade-in"
+              className="group relative flex flex-col items-center min-w-[140px] md:min-w-0 bg-gray-50 rounded-[2rem] p-4 md:p-6 transition-all duration-500 hover:bg-emerald-600 hover:-translate-y-2 hover:shadow-2xl hover:shadow-emerald-200 animate-fade-in shrink-0"
               style={{ animationDelay: `${idx * 50}ms` }}
             >
-              <div className="relative w-full aspect-square bg-white rounded-[2rem] p-4 mb-4 flex items-center justify-center shadow-inner group-hover:scale-95 transition-transform duration-500 overflow-hidden">
+              <div className="relative w-full aspect-square bg-white rounded-[1.5rem] md:rounded-[2rem] p-4 mb-4 flex items-center justify-center shadow-inner group-hover:scale-95 transition-transform duration-500 overflow-hidden">
                 <img 
                     src={c.image} 
                     alt={c.text} 
@@ -30,8 +30,8 @@ export default function Categories() {
                 />
               </div>
               <div className="text-center">
-                <div className="text-xs font-black text-gray-400 uppercase tracking-widest group-hover:text-white transition-colors">Sector</div>
-                <div className="text-sm font-black text-gray-800 tracking-tight group-hover:text-white transition-colors">{c.text}</div>
+                <div className="text-[8px] md:text-xs font-black text-gray-400 uppercase tracking-widest group-hover:text-white transition-colors">Sector</div>
+                <div className="text-[11px] md:text-sm font-black text-gray-800 tracking-tight group-hover:text-white transition-colors">{c.text}</div>
               </div>
               
               <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">

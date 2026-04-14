@@ -19,10 +19,17 @@
 }
 
 @layer base {
+  html, body {
+    @apply overflow-x-hidden max-w-full;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+  }
   body {
-    @apply bg-gray-50 text-gray-800 antialiased overflow-x-hidden;
+    @apply bg-gray-50 text-gray-800 antialiased;
     font-family: 'Plus Jakarta Sans', sans-serif;
-    font-size: 0.875rem; /* 14px base for extra compact UI */
+    font-size: 0.875rem;
+    /* 14px base for extra compact UI */
     line-height: 1.5;
   }
 }
@@ -31,7 +38,7 @@
   .btn-primary {
     @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-emerald-600 text-white font-bold hover:bg-emerald-700 hover:scale-[1.05] active:scale-95 transition-all shadow-md shadow-emerald-50 text-[10px];
   }
-  
+
   .btn-secondary {
     @apply inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg border border-gray-200 bg-white text-gray-700 font-bold hover:bg-gray-50 transition-all text-[10px];
   }
@@ -65,8 +72,15 @@
 
 /* Animations */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .animate-fade-in {
@@ -74,10 +88,24 @@
 }
 
 @keyframes bounceIn {
-  0% { opacity: 0; transform: scale(0.3) translateY(10px); }
-  50% { opacity: 1; transform: scale(1.05) translateY(-5px); }
-  70% { transform: scale(0.9) translateY(2px); }
-  100% { opacity: 1; transform: scale(1) translateY(0); }
+  0% {
+    opacity: 0;
+    transform: scale(0.3) translateY(10px);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.05) translateY(-5px);
+  }
+
+  70% {
+    transform: scale(0.9) translateY(2px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 .animate-bounce-in {

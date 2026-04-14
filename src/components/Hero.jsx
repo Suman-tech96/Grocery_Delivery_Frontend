@@ -43,7 +43,7 @@ export default function Hero() {
             <div
               key={idx}
               className={`absolute inset-0 transition-all duration-1000 ease-in-out transform ${
-                idx === current ? "opacity-100 translate-x-0" : "opacity-0 translate-x-full"
+                idx === current ? "opacity-100 translate-x-0 z-10" : "opacity-0 translate-x-8 pointer-events-none z-0 invisible"
               }`}
             >
               <img
@@ -55,7 +55,7 @@ export default function Hero() {
                 }}
               />
               <div className="absolute inset-x-0 inset-y-0 bg-gradient-to-r from-white via-white/50 to-transparent md:to-transparent"></div>
-              
+
               <div className="absolute inset-0 flex items-center px-6 md:px-16">
                 <div className="max-w-[240px] sm:max-w-[320px] md:max-w-[420px] animate-fade-in flex flex-col items-start text-left">
                   <span className="inline-block text-emerald-600 font-extrabold tracking-widest text-[10px] md:text-[11px] uppercase bg-emerald-50/90 backdrop-blur-sm px-2.5 py-1 rounded-full mb-3 italic">
@@ -67,11 +67,11 @@ export default function Hero() {
                   <p className="text-[10px] md:text-xs text-gray-500 font-medium max-w-[240px] md:max-w-[300px] hidden sm:block leading-relaxed mb-6">
                     {slide.subtitle}
                   </p>
-                  <div className="flex items-center gap-2">
-                    <a href="#/all-products" className="bg-gray-900 text-white font-black px-5 py-2.5 md:px-6 md:py-3 rounded-xl text-[9px] md:text-[10px] hover:bg-emerald-600 hover:scale-[1.05] transition-all shadow-lg shadow-gray-200">
+                  <div className="flex items-center gap-3">
+                    <a href="#/all-products" className="bg-gray-900 text-white font-black px-6 py-3 md:px-8 md:py-4 rounded-xl text-[10px] md:text-xs hover:bg-emerald-600 hover:scale-[1.05] transition-all shadow-lg shadow-gray-200">
                       SHOP NOW
                     </a>
-                    <a href="#footer" className="bg-white text-gray-400 font-bold px-5 py-2.5 md:px-6 md:py-3 rounded-xl text-[9px] md:text-[10px] border border-gray-100 hover:border-emerald-200 hover:text-emerald-600 transition-all">
+                    <a href="#footer" className="bg-white text-gray-400 font-bold px-6 py-3 md:px-8 md:py-4 rounded-xl text-[10px] md:text-xs border border-gray-100 hover:border-emerald-200 hover:text-emerald-600 transition-all">
                       DETAILS
                     </a>
                   </div>
@@ -86,9 +86,8 @@ export default function Hero() {
               <button
                 key={idx}
                 onClick={() => setCurrent(idx)}
-                className={`h-1.5 transition-all duration-500 rounded-full ${
-                  idx === current ? "w-8 bg-emerald-500" : "w-2 bg-gray-200"
-                }`}
+                className={`h-1.5 transition-all duration-500 rounded-full ${idx === current ? "w-8 bg-emerald-500" : "w-2 bg-gray-200"
+                  }`}
               />
             ))}
           </div>

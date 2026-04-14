@@ -50,9 +50,9 @@ export default function Header({ cartCount = 0, searchQuery = "", setSearch, use
               { name: "Recipes", path: "/recipes" },
               ...(user?.role === "seller" || user?.role === "admin"
                 ? [
-                    { name: "Seller Hub", path: "/seller" },
-                    { name: "Manage Recipes", path: "/recipes-admin" },
-                  ]
+                  { name: "Seller Hub", path: "/seller" },
+                  { name: "Manage Recipes", path: "/recipes-admin" },
+                ]
                 : []),
               ...(user?.role === "delivery"
                 ? [{ name: "Delivery Hub", path: "/delivery" }]
@@ -114,7 +114,7 @@ export default function Header({ cartCount = 0, searchQuery = "", setSearch, use
 
           <div className="flex items-center gap-1.5 md:gap-5">
             {/* Mobile Search Toggle */}
-            <button 
+            <button
               className="lg:hidden p-2 rounded-xl bg-gray-50 text-gray-900 border border-gray-100"
               onClick={() => setMobileSearch(!mobileSearch)}
             >
@@ -127,8 +127,8 @@ export default function Header({ cartCount = 0, searchQuery = "", setSearch, use
               </a>
             )}
 
-            <a 
-              href="/cart" 
+            <a
+              href="/cart"
               onClick={(e) => { e.preventDefault(); navigate("/cart"); }}
               className="group relative flex items-center justify-center p-2 md:p-3 rounded-xl md:rounded-2xl bg-gray-900 text-white hover:bg-emerald-600 transition-all shadow-xl shadow-gray-200"
             >
@@ -153,7 +153,7 @@ export default function Header({ cartCount = 0, searchQuery = "", setSearch, use
         <div className="search-overlay lg:hidden absolute top-full inset-x-0 bg-white border-t border-gray-100 p-4 shadow-xl animate-fade-in z-[110]">
           <div className="flex items-center gap-3 bg-gray-50 rounded-xl px-4 py-2.5 border border-emerald-100 shadow-inner">
             <svg className="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-            <input 
+            <input
               autoFocus
               placeholder="Searching for fresh goods..."
               className="w-full bg-transparent outline-none text-xs font-bold"
@@ -186,9 +186,9 @@ export default function Header({ cartCount = 0, searchQuery = "", setSearch, use
               { name: "Master Recipes", path: "/recipes" },
               ...(user?.role === "seller" || user?.role === "admin"
                 ? [
-                    { name: "Seller Command", path: "/seller" },
-                    { name: "Recipe Admin", path: "/recipes-admin" },
-                  ]
+                  { name: "Seller Command", path: "/seller" },
+                  { name: "Recipe Admin", path: "/recipes-admin" },
+                ]
                 : []),
               ...(user?.role === "delivery"
                 ? [{ name: "Logistics Hub", path: "/delivery" }]
@@ -207,16 +207,16 @@ export default function Header({ cartCount = 0, searchQuery = "", setSearch, use
 
           <div className="mt-auto pt-8 border-t border-gray-50">
             {!(user?.role === "seller" || user?.role === "admin" || user?.role === "delivery") ? (
-              <a 
-                href="/auth" 
-                className="flex items-center gap-3 text-lg font-black text-emerald-600 italic" 
+              <a
+                href="/auth"
+                className="flex items-center gap-3 text-lg font-black text-emerald-600 italic"
                 onClick={(e) => { e.preventDefault(); navigate("/auth"); setOpen(false); }}
               >
                 Unlock Partner Potential
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
               </a>
             ) : (
-                <div className="text-[10px] font-black text-gray-300 uppercase tracking-widest leading-none">Logged in as {user?.role}</div>
+              <div className="text-[10px] font-black text-gray-300 uppercase tracking-widest leading-none">Logged in as {user?.role}</div>
             )}
           </div>
         </div>
@@ -258,9 +258,9 @@ function Dropdown({ user, onLogout }) {
       </button>
       {open && (
         <div className="absolute right-0 mt-4 w-52 rounded-[2rem] bg-white shadow-2xl border border-gray-100 p-2.5 animate-bounce-in z-[300]">
-          <a 
-            href="/profile" 
-            className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold text-gray-600 hover:bg-emerald-50 hover:text-emerald-700 transition-colors" 
+          <a
+            href="/profile"
+            className="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold text-gray-600 hover:bg-emerald-50 hover:text-emerald-700 transition-colors"
             onClick={(e) => { e.preventDefault(); navigate("/profile"); setOpen(false); }}
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
