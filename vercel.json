@@ -1,9 +1,0 @@
-{
-  "routes": [
-  {
-  "rewrites": [
-    { "source": "/((?!.*\\.).*)", "destination": "/" }
-  ]
-}
-  ]
-}
